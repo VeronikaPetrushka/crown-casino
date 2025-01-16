@@ -1,16 +1,12 @@
 import { View, Dimensions } from "react-native"
-import Home from "../components/Home"
-import Menu from "../components/Menu";
+import AddCrown from "../components/AddCrown"
 
 const { height } = Dimensions.get('window');
 
-const HomeScreen = () => {
+const AddCrownScreen = () => {
     return (
         <View style={styles.container}>
-            <Home />
-            <View style={styles.menu}>
-                <Menu />
-            </View>
+            <AddCrown />
         </View>
     )
 }; 
@@ -28,4 +24,4 @@ const styles = {
     }
 }
 
-export default HomeScreen;
+export default AddCrownScreen;

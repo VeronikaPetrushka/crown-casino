@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import HomeScreen from './src/screens/HomeScreen';
+import AddCrownScreen from './src/screens/AddCrownScreen';
 
 enableScreens();
 
@@ -17,6 +18,11 @@ const App = () => {
               <Stack.Screen 
                   name="HomeScreen" 
                   component={HomeScreen} 
+                  options={{ headerShown: false }} 
+              />
+              <Stack.Screen 
+                  name="AddCrownScreen" 
+                  component={AddCrownScreen} 
                   options={{ headerShown: false }} 
               />
           </Stack.Navigator>
