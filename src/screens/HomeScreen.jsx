@@ -1,4 +1,4 @@
-import { View, Dimensions } from "react-native"
+import { View } from "react-native"
 import Home from "../components/Home"
 import Menu from "../components/Menu";
 

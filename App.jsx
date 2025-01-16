@@ -6,6 +6,9 @@ import HomeScreen from './src/screens/HomeScreen';
 import AddCrownScreen from './src/screens/AddCrownScreen';
 import FavsScreen from './src/screens/FavsScreen';
 import DetailsScreen from './src/screens/DetailsScreen';
+import GalleryScreen from './src/screens/GalleryScreen';
+import FavsGalleryScreen from './src/screens/FavsGalleryScreen';
+import GalleryDetailsScreen from './src/screens/GalleryDetailsScreen';
 
 enableScreens();
 
@@ -35,6 +38,21 @@ const App = () => {
               <Stack.Screen 
                   name="DetailsScreen" 
                   component={DetailsScreen} 
+                  options={{ headerShown: false }} 
+              />
+              <Stack.Screen 
+                  name="GalleryScreen" 
+                  component={GalleryScreen} 
+                  options={{ headerShown: false }} 
+              />
+              <Stack.Screen 
+                  name="FavsGalleryScreen" 
+                  component={FavsGalleryScreen} 
+                  options={{ headerShown: false }} 
+              />
+              <Stack.Screen 
+                  name="GalleryDetailsScreen" 
+                  component={GalleryDetailsScreen} 
                   options={{ headerShown: false }} 
               />
           </Stack.Navigator>

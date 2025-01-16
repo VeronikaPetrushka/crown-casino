@@ -1,4 +1,4 @@
-import { View, Dimensions } from "react-native"
+import { View } from "react-native"
 import AddCrown from "../components/AddCrown"
 
 const AddCrownScreen = ({ route }) => {
