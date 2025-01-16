@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView } from "react-native"
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView, Modal } from "react-native"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Icons from './Icons';
@@ -14,6 +14,10 @@ const Home = () => {
     const [crowns, setCrowns] = useState([]);
     const [filteredCrowns, setFilteredCrowns] = useState([]);
     const [favorites, setFavorites] = useState([]);
+    const [dotsModalVisible, setDotsModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedCrownToDelete, setSelectedCrownToDelete] = useState(null);
+    const [crownToEdit, setCrownToEdit] = useState(null);
 
     const fetchCrowns = async () => {
         try {
@@ -73,7 +77,45 @@ const Home = () => {
 
     const isFavorite = (crown) => {
         return favorites.some(fav => fav.heading === crown.heading);
+    }; 
+
+    const handleDeleteDots = () => {
+        setDotsModalVisible(false);
+        setModalVisible(true);
     };
+
+    const handleCrownSelection = (crown) => {
+        setCrownToEdit(crown);
+        setSelectedCrownToDelete(crown);
+        setDotsModalVisible(true)
+    }
+    
+    const deleteCrown = async () => {
+        if (selectedCrownToDelete) {
+            try {
+                const updatedCrowns = crowns.filter(crown => crown.heading !== selectedCrownToDelete.heading);
+                setCrowns(updatedCrowns);
+    
+                setFilteredCrowns(updatedCrowns.filter(crown => crown.filterChosen === filterPressed));
+    
+                const updatedFavorites = favorites.filter(fav => fav.heading !== selectedCrownToDelete.heading);
+                setFavorites(updatedFavorites);
+    
+                await AsyncStorage.setItem('crowns', JSON.stringify(updatedCrowns));
+                await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    
+                console.log('Crown and its favorite entry deleted successfully!');
+                setModalVisible(false);
+            } catch (error) {
+                console.error('Error deleting crown or favorite:', error);
+            }
+        }
+    };
+
+    const handleEdit = () => {
+        setDotsModalVisible(false);
+        navigation.navigate('AddCrownScreen', {crown: crownToEdit}) 
+    }
 
     return (
         <View style={styles.container}>
@@ -123,9 +165,12 @@ const Home = () => {
             {filteredCrowns.length > 0 ? (
                 <ScrollView style={{width: '100%', paddingHorizontal: 16}}>
                     {filteredCrowns.map((crown, index) => (
-                        <View key={index} style={styles.crownItem}>
+                        <TouchableOpacity key={index} style={styles.crownItem} onPress={() => navigation.navigate('DetailsScreen', {crown: crown})}>
                             <View style={styles.crownTools}>
-                                <TouchableOpacity style={[styles.crownToolIcon, {width: 36}]}>
+                                <TouchableOpacity 
+                                    style={[styles.crownToolIcon, {width: 36}]}
+                                    onPress={() => handleCrownSelection(crown)}
+                                    >
                                     <Icons type={'dots'} />
                                 </TouchableOpacity>
                                 <TouchableOpacity 
@@ -146,7 +191,7 @@ const Home = () => {
                                     <Text style={styles.crownDescription}>{crown.jewels.length} items</Text>
                                 </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     ))}
                 </ScrollView>
             ) : (
@@ -159,6 +204,67 @@ const Home = () => {
                 </View>
             )
         }
+
+                <Modal
+                    transparent={true}
+                    animationType="fade"
+                    visible={dotsModalVisible}
+                    onRequestClose={() => setDotsModalVisible(false)}
+                >
+                    <View style={[styles.modalContainer, {justifyContent: 'flex-end'}]}>
+                        <View style={styles.modalContentDots}>
+                            <View style={styles.modalBtnsContainer}>
+                                <TouchableOpacity
+                                    style={styles.modalButton}
+                                    onPress={handleEdit}
+                                >
+                                    <Text 
+                                        style={[styles.modalButtonText, {borderTopWidth: 0, fontWeight: '400', color: '#000'}]}>
+                                            Edit
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.modalButton}
+                                    onPress={handleDeleteDots}
+                                >
+                                    <Text style={[styles.modalButtonText, {fontWeight: '400'}]}>Delete</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <TouchableOpacity
+                                style={styles.dotsCancelBtn}
+                                onPress={() => setDotsModalVisible(false)}
+                            >
+                                <Text style={styles.dotsCancelBtnText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
+                <Modal
+                    transparent={true}
+                    animationType="fade"
+                    visible={modalVisible}
+                    onRequestClose={() => setModalVisible(false)}
+                >
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalTitle}>Delete the crown ?</Text>
+                            <Text style={styles.modalText}>{`Are you sure you want to delete ${selectedCrownToDelete?.heading}?`}</Text>
+                            <TouchableOpacity
+                                style={styles.modalButton}
+                                onPress={deleteCrown}
+                            >
+                                <Text style={styles.modalButtonText}>Delete</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{width: '100%', paddingVertical: 11, alignItems: 'center', justifyContent: 'center'}}
+                                onPress={() => setModalVisible(false)}
+                            >
+                                <Text style={[styles.modalButtonText, {fontWeight: '400', color: '#000'}]}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
 
         </View>
     )
@@ -260,7 +366,8 @@ const styles = StyleSheet.create({
 
     crownItem: {
         width: '100%',
-        height: 224
+        height: 224,
+        marginBottom: 24
     },
 
     crownImage: {
@@ -300,7 +407,85 @@ const styles = StyleSheet.create({
     crownToolIcon: {
         width: 28,
         height: 24
-    }
+    },
+
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    },
+
+    modalContent: {
+        width: '70%',
+        backgroundColor: '#fff',
+        borderRadius: 14,
+        paddingTop: 16,
+        alignItems: 'center',
+    },
+
+    modalContentDots: {
+        width: '95%',
+        alignItems: 'center',
+    },
+
+    modalBtnsContainer: {
+        width: '100%',
+        backgroundColor: '#fff',
+        borderRadius: 14,
+        alignItems: 'center',
+        marginBottom: 8
+    },
+
+    dotsCancelBtn: {
+        width: '100%',
+        padding: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff',
+        borderRadius: 14,
+    },
+
+    dotsCancelBtnText: {
+        fontWeight: '600',
+        fontSize: 17,
+        lineHeight: 22,
+        color: '#000',
+    },
+
+    modalButton: {
+        width: '100%',
+        paddingVertical: 11,
+        borderTopWidth: 0.33,
+        borderBottomWidth: 0.33,
+        borderBottomColor: '#999',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    modalButtonText: {
+        fontWeight: '600',
+        fontSize: 17,
+        lineHeight: 22,
+        color: '#ff0e0a',
+    },
+
+    modalTitle: {
+        fontWeight: '600',
+        fontSize: 17,
+        lineHeight: 22,
+        color: '#000',
+        marginBottom: 5
+    },
+
+    modalText: {
+        fontWeight: '400',
+        fontSize: 16,
+        lineHeight: 19,
+        color: '#000',
+        marginBottom: 16,
+        textAlign: 'center'
+    },
 
 })
 

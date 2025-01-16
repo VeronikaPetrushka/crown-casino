@@ -1,10 +1,11 @@
 import { View, Dimensions } from "react-native"
 import AddCrown from "../components/AddCrown"
 
-const AddCrownScreen = () => {
+const AddCrownScreen = ({ route }) => {
+    const { crown } = route.params || {};
     return (
         <View style={styles.container}>
-            <AddCrown />
+            <AddCrown crown={crown} />
         </View>
     )
 }; 

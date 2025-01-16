@@ -7,13 +7,13 @@ import Icons from './Icons';
 
 const { height } = Dimensions.get('window');
 
-const AddCrown = () => {
+const AddCrown = ({ crown }) => {
     const navigation = useNavigation();
-    const [heading, setHeading] = useState('');
-    const [description, setDescription] = useState('');
-    const [filterChosen, setFilterChosen] = useState('gold');
-    const [image, setImage] = useState(null);
-    const [jewels, setJewels] = useState([]);
+    const [heading, setHeading] = useState(crown ? crown.heading : '');
+    const [description, setDescription] = useState(crown ? crown.description : '');
+    const [filterChosen, setFilterChosen] = useState(crown ? crown.category : 'gold');
+    const [image, setImage] = useState(crown ? crown.image : null);
+    const [jewels, setJewels] = useState(crown ? crown.jewels : []);
     const [saved, setSaved] = useState(false);
 
     const resetInput = (setter) => {
@@ -40,7 +40,7 @@ const AddCrown = () => {
     
         const validJewels = jewels.filter(jewel => jewel.heading.trim() && jewel.description.trim());
     
-        const crown = {
+        const newCrown = {
             heading,
             description,
             filterChosen,
@@ -50,21 +50,27 @@ const AddCrown = () => {
     
         try {
             const existingCrowns = await AsyncStorage.getItem('crowns');
-            const crowns = existingCrowns ? JSON.parse(existingCrowns) : [];
+            let crowns = existingCrowns ? JSON.parse(existingCrowns) : [];
     
-            crowns.push(crown);
+            if (crown) {
+                const updatedCrowns = crowns.map(c => 
+                    c.heading === crown.heading ? { ...c, ...newCrown } : c
+                );
+                crowns = updatedCrowns;
+            } else {
+                crowns.push(newCrown);
+            }
     
             await AsyncStorage.setItem('crowns', JSON.stringify(crowns));
-
-            console.log(crowns)
     
+            console.log(crowns);
             setSaved(true);
         } catch (error) {
             console.error('Error saving crown:', error);
             alert('Failed to save the crown. Please try again.');
         }
-    };    
-
+    };
+    
     return (
         <View style={styles.container}>
 

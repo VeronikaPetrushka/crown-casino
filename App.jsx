@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './src/screens/HomeScreen';
 import AddCrownScreen from './src/screens/AddCrownScreen';
 import FavsScreen from './src/screens/FavsScreen';
+import DetailsScreen from './src/screens/DetailsScreen';
 
 enableScreens();
 
@@ -29,6 +30,11 @@ const App = () => {
               <Stack.Screen 
                   name="FavsScreen" 
                   component={FavsScreen} 
+                  options={{ headerShown: false }} 
+              />
+              <Stack.Screen 
+                  name="DetailsScreen" 
+                  component={DetailsScreen} 
                   options={{ headerShown: false }} 
               />
           </Stack.Navigator>

@@ -1,10 +1,11 @@
 import { View } from "react-native"
-import Favs from "../components/Favs"
+import Details from "../components/Details"
 
-const FavsScreen = () => {
+const DetailsScreen = ({ route }) => {
+    const { crown } = route.params;
     return (
         <View style={styles.container}>
-            <Favs />
+            <Details crown={crown} />
         </View>
     )
 }; 
@@ -16,4 +17,4 @@ const styles = {
     }
 }
 
-export default FavsScreen;
+export default DetailsScreen;
