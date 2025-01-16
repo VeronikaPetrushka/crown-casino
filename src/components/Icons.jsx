@@ -26,6 +26,9 @@ const Icons = ({ type, active, pressed }) => {
     case 'fav':
       imageSource = require('../assets/icons/fav.png');
       break;
+    case 'fav-black':
+      imageSource = require('../assets/icons/fav-black.png');
+      break;
     case 'cross':
       imageSource = require('../assets/icons/cross.png');
       break;

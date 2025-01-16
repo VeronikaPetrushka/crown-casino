@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet } from "react-native"
+import React, { useState, useEffect } from 'react'
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView } from "react-native"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Icons from './Icons';
 
@@ -10,6 +11,69 @@ const THRESHOLD = height <= THRESHOLD_HEIGHT;
 const Home = () => {
     const navigation = useNavigation();
     const [filterPressed, setFilterPressed] = useState('gold');
+    const [crowns, setCrowns] = useState([]);
+    const [filteredCrowns, setFilteredCrowns] = useState([]);
+    const [favorites, setFavorites] = useState([]);
+
+    const fetchCrowns = async () => {
+        try {
+            const storedCrowns = await AsyncStorage.getItem('crowns');
+            const parsedCrowns = storedCrowns ? JSON.parse(storedCrowns) : [];
+            setCrowns(parsedCrowns);
+
+            setFilteredCrowns(parsedCrowns.filter(crown => crown.filterChosen === 'gold'));
+        } catch (error) {
+            console.error('Error retrieving crowns:', error);
+        }
+    };
+
+    useEffect(() => {
+        const updatedFilteredCrowns = crowns.filter(crown => crown.filterChosen === filterPressed);
+        setFilteredCrowns(updatedFilteredCrowns);
+    }, [filterPressed, crowns]);
+
+    const fetchFavorites = async () => {
+        try {
+            const storedFavorites = await AsyncStorage.getItem('favorites');
+            const parsedFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
+            setFavorites(parsedFavorites);
+        } catch (error) {
+            console.error('Error retrieving favorites:', error);
+        }
+    };
+
+    const addToFavorites = async (crown) => {
+        try {
+            const updatedFavorites = [...favorites, crown];
+            setFavorites(updatedFavorites);
+
+            await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+            console.log('Crown added to favorites!');
+        } catch (error) {
+            console.error('Error adding crown to favorites:', error);
+        }
+    };
+
+    const removeFromFavorites = async (crown) => {
+        try {
+            const updatedFavorites = favorites.filter(fav => fav.heading !== crown.heading);
+            setFavorites(updatedFavorites);
+
+            await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+            console.log('Crown removed from favorites!');
+        } catch (error) {
+            console.error('Error removing crown from favorites:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCrowns();
+        fetchFavorites();
+    }, []);
+
+    const isFavorite = (crown) => {
+        return favorites.some(fav => fav.heading === crown.heading);
+    };
 
     return (
         <View style={styles.container}>
@@ -17,7 +81,7 @@ const Home = () => {
             <View style={{width: '100%', backgroundColor: '#f6f6f6', paddingTop: height * 0.07, paddingHorizontal: 16}}>
                 <View style={styles.upperContainer}>
                     <Text style={styles.title}>Your Crowns</Text>
-                    <TouchableOpacity style={styles.favBtn}>
+                    <TouchableOpacity style={styles.favBtn} onPress={() => navigation.navigate('FavsScreen')}>
                         <Icons type={'fav'} />
                     </TouchableOpacity>
                 </View>
@@ -56,13 +120,45 @@ const Home = () => {
                 </View>
             </View>
 
-            <View style={styles.noContainer}>
-                <Image source={require('../assets/decor/crown.png')} style={styles.noImage} />
-                <Text style={styles.noText}>There aren’t any beaches you add yet, you can do it now</Text>
-                <TouchableOpacity style={styles.noAddBtn} onPress={() => navigation.navigate('AddCrownScreen')}>
-                    <Text style={styles.noAddBtnText}>Add a crown</Text>
-                </TouchableOpacity>
-            </View>
+            {filteredCrowns.length > 0 ? (
+                <ScrollView style={{width: '100%', paddingHorizontal: 16}}>
+                    {filteredCrowns.map((crown, index) => (
+                        <View key={index} style={styles.crownItem}>
+                            <View style={styles.crownTools}>
+                                <TouchableOpacity style={[styles.crownToolIcon, {width: 36}]}>
+                                    <Icons type={'dots'} />
+                                </TouchableOpacity>
+                                <TouchableOpacity 
+                                    style={styles.crownToolIcon} 
+                                    onPress={() => isFavorite(crown) ? removeFromFavorites(crown) : addToFavorites(crown)}
+                                    >
+                                    <Icons type={isFavorite(crown) ? 'fav-black' : 'fav'} />
+                                </TouchableOpacity>
+                            </View>
+                            {crown.image && <Image source={{ uri: crown.image }} style={styles.crownImage} />}
+                            <View style={{width: '100%'}}>
+                                <View style={{width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', marginBottom: 4}}>
+                                    <Text style={[styles.crownHeading, {width: 200}]} numberOfLines={1} ellipsizeMode='tail'>{crown.heading}</Text>
+                                    <Text style={styles.crownDescription}>{crown.filterChosen}</Text>
+                                </View>
+                                <View style={{width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
+                                    <Text style={[styles.crownDescription, {width: 200}]} numberOfLines={1} ellipsizeMode='tail'>{crown.description}</Text>
+                                    <Text style={styles.crownDescription}>{crown.jewels.length} items</Text>
+                                </View>
+                            </View>
+                        </View>
+                    ))}
+                </ScrollView>
+            ) : (
+                <View style={styles.noContainer}>
+                    <Image source={require('../assets/decor/crown.png')} style={styles.noImage} />
+                    <Text style={styles.noText}>There aren’t any beaches you add yet, you can do it now</Text>
+                    <TouchableOpacity style={styles.noAddBtn} onPress={() => navigation.navigate('AddCrownScreen')}>
+                        <Text style={styles.noAddBtnText}>Add a crown</Text>
+                    </TouchableOpacity>
+                </View>
+            )
+        }
 
         </View>
     )
@@ -74,7 +170,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
-        justifyContent: 'flex-start'
+        justifyContent: 'flex-start',
+        paddingBottom: 80
     },
 
     upperContainer: {
@@ -159,8 +256,51 @@ const styles = StyleSheet.create({
         fontSize: 12,
         lineHeight: 14.32,
         color: '#000',
-    }
+    },
 
+    crownItem: {
+        width: '100%',
+        height: 224
+    },
+
+    crownImage: {
+        width: '100%',
+        height: 177,
+        marginBottom: 10,
+        resizeMode: 'cover'
+    },
+
+    crownHeading: {
+        fontWeight: '500',
+        fontSize: 18,
+        lineHeight: 21.48,
+        color: '#000',
+    },
+
+    crownDescription: {
+        fontWeight: '400',
+        fontSize: 12,
+        lineHeight: 14.32,
+        color: '#000',
+        opacity: 0.4
+    },
+
+    crownTools: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        zIndex: 10,
+        padding: 16
+    },
+
+    crownToolIcon: {
+        width: 28,
+        height: 24
+    }
 
 })
 

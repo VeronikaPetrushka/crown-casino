@@ -2,8 +2,6 @@ import { View, Dimensions } from "react-native"
 import Home from "../components/Home"
 import Menu from "../components/Menu";
 
-const { height } = Dimensions.get('window');
-
 const HomeScreen = () => {
     return (
         <View style={styles.container}>

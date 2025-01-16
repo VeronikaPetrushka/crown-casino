@@ -1,10 +1,10 @@
 import { View, Dimensions } from "react-native"
-import AddCrown from "../components/AddCrown"
+import Favs from "../components/Favs"
 
-const AddCrownScreen = () => {
+const FavsScreen = () => {
     return (
         <View style={styles.container}>
-            <AddCrown />
+            <Favs />
         </View>
     )
 }; 
@@ -22,4 +22,4 @@ const styles = {
     }
 }
 
-export default AddCrownScreen;
+export default FavsScreen;
