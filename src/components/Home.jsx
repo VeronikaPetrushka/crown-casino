@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Icons from './Icons';
+import AddCrown from './AddCrown';
 
 const { height } = Dimensions.get('window');
 const THRESHOLD_HEIGHT = 700;
@@ -193,6 +194,7 @@ const Home = () => {
                             </View>
                         </TouchableOpacity>
                     ))}
+    
                 </ScrollView>
             ) : (
                 <View style={styles.noContainer}>
@@ -202,6 +204,14 @@ const Home = () => {
                         <Text style={styles.noAddBtnText}>Add a crown</Text>
                     </TouchableOpacity>
                 </View>
+            )
+        }
+
+        {
+            filteredCrowns.length > 0 && (
+                <TouchableOpacity style={styles.addBtn} onPress={() => navigation.navigate('AddCrownScreen')}>
+                    <Icons type={'plus'} />
+                </TouchableOpacity>
             )
         }
 
@@ -298,6 +308,21 @@ const styles = StyleSheet.create({
     favBtn: {
         width: 28,
         height: 24
+    },
+
+    addBtn: {
+        width: 78,
+        height: 78,
+        padding: 23,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fdf8ea',
+        borderRadius: 100,
+        borderColor: '#000',
+        borderWidth: 1,
+        position: 'absolute',
+        right: 16,
+        bottom: 120
     },
 
     panelContainer: {
