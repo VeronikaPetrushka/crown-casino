@@ -13,6 +13,7 @@ import EventsScreen from './src/screens/EventsScreen';
 import EventsDetailsScreen from './src/screens/EventsDetailsScreen';
 import FavsEventsScreen from './src/screens/FavsEventsScreen';
 import AddEventScreen from './src/screens/AddEventScreen';
+import SignupScreen from './src/screens/SignupScreen';
 
 enableScreens();
 
@@ -77,6 +78,11 @@ const App = () => {
               <Stack.Screen 
                   name="AddEventScreen" 
                   component={AddEventScreen} 
+                  options={{ headerShown: false }} 
+              />
+              <Stack.Screen 
+                  name="SignupScreen" 
+                  component={SignupScreen} 
                   options={{ headerShown: false }} 
               />
           </Stack.Navigator>

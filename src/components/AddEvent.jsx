@@ -103,7 +103,7 @@ const AddEvent = ({ event }) => {
     
             if (event) {
                 const updatedEvents = events.map(e => 
-                    e.heading === event.heading ? { ...e, ...newEvent } : c
+                    e.heading === event.heading ? { ...e, ...newEvent } : e
                 );
                 events = updatedEvents;
             } else {

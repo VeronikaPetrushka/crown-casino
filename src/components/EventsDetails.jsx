@@ -93,6 +93,16 @@ const EventsDetails = ({ item }) => {
             }
 
             </ScrollView>
+
+            {/* {
+                item.name && ( */}
+                    <View style={styles.signBtnContainer}>
+                        <TouchableOpacity style={styles.signBtn} onPress={() => navigation.navigate('SignupScreen', {item: item})}>
+                            <Text style={styles.signBtnText}>Sign up</Text>
+                        </TouchableOpacity>
+                    </View>
+                {/* )
+            } */}
            
         </View>
     );
@@ -160,6 +170,32 @@ const styles = StyleSheet.create({
         lineHeight: 19,
         color: '#000',
         marginBottom: 24
+    },
+
+    signBtnContainer: {
+        width: '100%', 
+        padding: 16, 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        backgroundColor: '#fff',
+        position: 'absolute',
+        bottom: 0,
+        alignSelf: 'center'
+    },
+
+    signBtn: {
+        width: '100%',
+        backgroundColor: '#000',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16.5
+    },
+
+    signBtnText: {
+        fontWeight: '700',
+        fontSize: 16,
+        lineHeight: 19,
+        color: '#fff',
     },
 
 });
