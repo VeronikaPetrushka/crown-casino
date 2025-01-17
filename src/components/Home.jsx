@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView, Modal, Button } from "react-native"
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Icons from './Icons';
 import AddCrown from './AddCrown';
 
@@ -71,10 +71,12 @@ const Home = () => {
         }
     };
 
-    useEffect(() => {
-        fetchCrowns();
-        fetchFavorites();
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            fetchCrowns();
+            fetchFavorites();
+        }, [])
+    );
 
     const isFavorite = (crown) => {
         return favorites.some(fav => fav.heading === crown.heading);

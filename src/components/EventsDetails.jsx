@@ -8,13 +8,13 @@ const { height } = Dimensions.get('window');
 const THRESHOLD_HEIGHT = 700;
 const THRESHOLD = height <= THRESHOLD_HEIGHT;
 
-const GalleryDetails = ({ item }) => {
+const EventsDetails = ({ item }) => {
     const navigation = useNavigation();
     const [favorites, setFavorites] = useState([]);
 
     const fetchFavorites = async () => {
         try {
-            const storedFavorites = await AsyncStorage.getItem('favoriteGallery');
+            const storedFavorites = await AsyncStorage.getItem('favoriteEvents');
             const parsedFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
             setFavorites(parsedFavorites);
         } catch (error) {
@@ -27,7 +27,7 @@ const GalleryDetails = ({ item }) => {
             const updatedFavorites = [...favorites, item];
             setFavorites(updatedFavorites);
 
-            await AsyncStorage.setItem('favoriteGallery', JSON.stringify(updatedFavorites));
+            await AsyncStorage.setItem('favoriteEvents', JSON.stringify(updatedFavorites));
             console.log('Crown added to favorites!');
         } catch (error) {
             console.error('Error adding crown to favorites:', error);
@@ -39,7 +39,7 @@ const GalleryDetails = ({ item }) => {
             const updatedFavorites = favorites.filter(fav => fav.name !== item.name);
             setFavorites(updatedFavorites);
 
-            await AsyncStorage.setItem('favoriteGallery', JSON.stringify(updatedFavorites));
+            await AsyncStorage.setItem('favoriteEvents', JSON.stringify(updatedFavorites));
             console.log('Crown removed from favorites!');
         } catch (error) {
             console.error('Error removing crown from favorites:', error);
@@ -61,10 +61,10 @@ const GalleryDetails = ({ item }) => {
                     <Icons type={'back'} />
             </TouchableOpacity>
 
-            <Image source={item.image} style={styles.image} />
+            <Image source={typeof item.image === 'string' ? { uri: item.image } : item.image} style={styles.image} />
 
             <View style={styles.headingContainer}>
-                <Text style={styles.heading}>{item.name}</Text>
+                <Text style={styles.heading}>{item.name || item.heading}</Text>
                 <TouchableOpacity 
                     style={styles.itemToolIcon} 
                     onPress={() => isFavorite(item) ? removeFromFavorites(item) : addToFavorites(item)}
@@ -73,13 +73,25 @@ const GalleryDetails = ({ item }) => {
                 </TouchableOpacity>
             </View>
 
+            <View style={{width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', paddingHorizontal: 16, marginBottom: 24}}>
+                <Text style={styles.date}>{item.date}</Text>
+                <Text style={styles.date}>{item.time}</Text>
+            </View>
+
 
             <ScrollView style={{width: '100%', paddingHorizontal: 16}}>
-                {
-                    item.description.map((desc, i) => (
-                        <Text key={i} style={styles.description}>{desc}</Text>
-                    ))
-                }
+            {
+                item.description && (
+                    Array.isArray(item.description) ? (
+                        item.description.map((desc, i) => (
+                            <Text key={i} style={styles.description}>{desc}</Text>
+                        ))
+                    ) : (
+                        <Text style={styles.description}>{item.description}</Text>
+                    )
+                )
+            }
+
             </ScrollView>
            
         </View>
@@ -134,6 +146,14 @@ const styles = StyleSheet.create({
         height: 24
     },
 
+    date: {
+        fontWeight: '400',
+        fontSize: 16,
+        lineHeight: 19,
+        color: '#000',
+        opacity: 0.5
+    },
+
     description: {
         fontWeight: '400',
         fontSize: 16,
@@ -144,4 +164,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default GalleryDetails;
+export default EventsDetails;

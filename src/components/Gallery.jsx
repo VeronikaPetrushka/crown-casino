@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import gallery from '../constants/gallery';
 import Icons from './Icons';
 
@@ -47,9 +47,11 @@ const Gallery = () => {
         }
     };
 
-    useEffect(() => {
-        fetchFavorites();
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            fetchFavorites();
+        }, [])
+    );
 
     const isFavorite = (item) => {
         return favorites.some(fav => fav.name === item.name);
