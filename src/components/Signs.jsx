@@ -3,38 +3,37 @@ import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Calendar } from 'react-native-calendars';
-import events from '../constants/events';
 import Icons from './Icons';
 
 const { height, width } = Dimensions.get('window');
 const THRESHOLD_HEIGHT = 700;
 const THRESHOLD = height <= THRESHOLD_HEIGHT;
 
-const Events = () => {
+const Signs = () => {
     const navigation = useNavigation();
     const [favorites, setFavorites] = useState([]);
     const [addedEvents, setAddedEvents] = useState([]); 
     const [calendar, setCalendar] = useState(false);
     const [date, setDate] = useState(null);
-    const [filterPressed, setFilterPressed] = useState('general');
     const [dotsModalVisible, setDotsModalVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedEventToDelete, setSelectedEventToDelete] = useState(null);
     const [eventToEdit, setEventToEdit] = useState(null);
+    const [signedEvents, setSignedEvents] = useState([]);
 
-    const fetchAddedEvents = async () => {
+    const fetchSignedEvents = async () => {
         try {
-            const storedEvents = await AsyncStorage.getItem('events');
-            const parsedEvents = storedEvents ? JSON.parse(storedEvents) : [];
-            setAddedEvents(parsedEvents);
+            const storedSignedEvents = await AsyncStorage.getItem('signed');
+            const parsedSignedEvents = storedSignedEvents ? JSON.parse(storedSignedEvents) : [];
+            setSignedEvents(parsedSignedEvents);
         } catch (error) {
-            console.error('Error retrieving added events:', error);
+            console.error('Error retrieving signed events:', error);
         }
     };
 
     const fetchFavorites = async () => {
         try {
-            const storedFavorites = await AsyncStorage.getItem('favoriteEvents');
+            const storedFavorites = await AsyncStorage.getItem('favoriteSigns');
             const parsedFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
             setFavorites(parsedFavorites);
         } catch (error) {
@@ -47,7 +46,7 @@ const Events = () => {
             const updatedFavorites = [...favorites, item];
             setFavorites(updatedFavorites);
 
-            await AsyncStorage.setItem('favoriteEvents', JSON.stringify(updatedFavorites));
+            await AsyncStorage.setItem('favoriteSigns', JSON.stringify(updatedFavorites));
             console.log('Item added to favorites!');
         } catch (error) {
             console.error('Error adding item to favorites:', error);
@@ -59,7 +58,7 @@ const Events = () => {
             const updatedFavorites = favorites.filter(fav => fav.name !== item.name);
             setFavorites(updatedFavorites);
 
-            await AsyncStorage.setItem('favoriteEvents', JSON.stringify(updatedFavorites));
+            await AsyncStorage.setItem('favoriteSigns', JSON.stringify(updatedFavorites));
             console.log('Item removed from favorites!');
         } catch (error) {
             console.error('Error removing item from favorites:', error);
@@ -68,7 +67,7 @@ const Events = () => {
 
     useFocusEffect(
         useCallback(() => {
-            fetchAddedEvents();
+            fetchSignedEvents();
             fetchFavorites();
         }, [])
     );
@@ -76,16 +75,6 @@ const Events = () => {
     const isFavorite = (item) => {
         return favorites.some(fav => fav.name === item.name);
     };
-
-    const formatDate = (dateString) => {
-        const [day, month, year] = dateString.split('.');
-        const date = new Date(`${year}-${month}-${day}`);
-        return date.toLocaleString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-        });
-    }; 
     
     const handleDeleteDots = () => {
         setDotsModalVisible(false);
@@ -107,8 +96,8 @@ const Events = () => {
                 const updatedFavorites = favorites.filter(fav => fav.heading !== selectedEventToDelete.heading);
                 setFavorites(updatedFavorites);
     
-                await AsyncStorage.setItem('events', JSON.stringify(updatedAddedEvents));
-                await AsyncStorage.setItem('favoriteEvents', JSON.stringify(updatedFavorites));
+                await AsyncStorage.setItem('signed', JSON.stringify(updatedAddedEvents));
+                await AsyncStorage.setItem('favoriteSigns', JSON.stringify(updatedFavorites));
     
                 console.log('Event and its favorite entry deleted successfully!');
                 setModalVisible(false);
@@ -142,19 +131,14 @@ const Events = () => {
         setCalendar(false);
     };     
 
-    const filteredEvents = date
-    ? events.filter(item => {
+    const filteredSignedEvents = date
+    ? signedEvents.filter(item => {
         const eventDate = new Date(item.date);
         return eventDate.toDateString() === date.toDateString();
     })
-    : events;
+    : signedEvents;
 
-    const filteredAddedEvents = date
-        ? addedEvents.filter(item => {
-            const addedEventDate = new Date(item.date);
-            return addedEventDate.toDateString() === date.toDateString();
-        })
-        : addedEvents;
+    console.log(signedEvents)
 
     return (
         <View style={styles.container}>
@@ -167,41 +151,19 @@ const Events = () => {
                     marginBottom: 16
                 }}
                     >
-                    <Text style={styles.title}>Crowns events</Text>
+                    <TouchableOpacity style={{width: 44, height: 44}} onPress={() => navigation.goBack('')}>
+                        <Icons type={'back'} />
+                    </TouchableOpacity>
+                    <Text style={styles.title}>Reservations</Text>
                     <View style={{alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
                         <TouchableOpacity style={styles.calendarBtn} onPress={handleCalendar}>
                             <Icons type={date != null ? 'calendar2' : 'calendar'} pressed={calendar} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.favBtn} onPress={() => navigation.navigate('FavsEventsScreen')}>
+                        <TouchableOpacity style={styles.favBtn} onPress={() => navigation.navigate('FavsSignsScreen')}>
                             <Icons type={'fav'} />
                         </TouchableOpacity>
                     </View>
                 </View>
-
-                <View style={styles.panelContainer}>
-                    <TouchableOpacity 
-                        style={[styles.panelBtn, filterPressed === 'general' && {backgroundColor: '#000'}]}
-                        onPress={() => setFilterPressed('general')}
-                        >
-                        <Text 
-                            style={[styles.panelBtnText, filterPressed === 'general' && {color: '#fff', fontWeight: '600'}]}
-                            >
-                                General
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity  
-                        style={[styles.panelBtn, {borderRightWidth: 0}, filterPressed === 'added' && {backgroundColor: '#000'}]}
-                        onPress={() => setFilterPressed('added')}
-                        >
-                        <Text 
-                            style={[styles.panelBtnText, filterPressed === 'added' && {color: '#fff', fontWeight: '600'}]}
-                            >
-                                Added
-                        </Text>
-                    </TouchableOpacity>
-
-                </View>
-
             </View>
 
             {
@@ -238,103 +200,57 @@ const Events = () => {
                     <View style={{width: '100%'}}>
                         <ScrollView style={{width: '100%', paddingHorizontal: 16}}>
 
-                            {
-                                filterPressed === 'general' ? (
-                                    <View style={{width: '100%'}}>
-                                        {
-                                            filteredEvents.map((item, index) => (
-                                                <TouchableOpacity key={index} style={{width: '100%', marginBottom: 24}} onPress={() => navigation.navigate('EventsDetailsScreen', {item: item})}>
-                                                    <Text style={styles.date}>{item.date}</Text>
-                                                    <Image source={item.image} style={styles.image} />
-
-                                                    <View style={{width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
-                                                        <Text style={styles.name}>{item.name}</Text>
-                                                        <Text style={styles.time}>{item.time}</Text>
-                                                    </View>
+                        {
+                            filteredSignedEvents.length > 0 ? (
+                                <View style={{width: '100%'}}>
+                                    {
+                                        filteredSignedEvents.map((item, index) => (
+                                            <TouchableOpacity key={index} style={{width: '100%', marginBottom: 24}} onPress={() => navigation.navigate('EventsDetailsScreen', {item: item.item})}>
+                                                <Text style={styles.date}>{item.item.date}</Text>
+                                                <Image source={typeof item.item.image === 'string' ? { uri: item.item.image } : item.item.image} style={styles.image} />
+                    
+                                                <View style={{width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
+                                                    <Text style={styles.name}>{item.item.heading || item.item.name}</Text>
+                                                    <Text style={styles.time}>{item.item.time}</Text>
+                                                </View>
+                                                <View style={styles.itemTools}>
                                                     <TouchableOpacity 
-                                                        style={styles.favIcon} 
+                                                        style={[styles.itemToolIcon, {width: 36}]}
+                                                        onPress={() => handleEventSelection(item)}
+                                                        >
+                                                        <Icons type={'dots'} />
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity 
+                                                        style={styles.itemToolIcon} 
                                                         onPress={() => isFavorite(item) ? removeFromFavorites(item) : addToFavorites(item)}
                                                         >
                                                         <Icons type={isFavorite(item) ? 'fav-black' : 'fav'} />
                                                     </TouchableOpacity>
-                                                </TouchableOpacity>
-                                            ))
-                                        }
-                                        {
-                                            filteredEvents.length === 0 && (
-                                                <View style={styles.noContainer}>
-                                                    <Image source={require('../assets/decor/crown.png')} style={styles.noImage} />
-                                                    <Text style={styles.noText}>There aren’t any events on selected date</Text>
                                                 </View>
-                                            )
-                                        }
-                                    </View>        
-                                ) : (
-                                    <View style={{width: '100%'}}>
-                                        {
-                                            filteredAddedEvents.length > 0 ? (
-                                                <View style={{width: '100%'}}>
-                                                    {
-                                                        filteredAddedEvents.map((item, index) => (
-                                                            <TouchableOpacity key={index} style={{width: '100%', marginBottom: 24}} onPress={() => navigation.navigate('EventsDetailsScreen', {item: item})}>
-                                                                <Text style={styles.date}>{formatDate(item.date)}</Text>
-                                                                <Image source={{uri: item.image}} style={styles.image} />
-                                    
-                                                                <View style={{width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
-                                                                    <Text style={styles.name}>{item.heading}</Text>
-                                                                    <Text style={styles.time}>{item.time}</Text>
-                                                                </View>
-                                                                <View style={styles.itemTools}>
-                                                                    <TouchableOpacity 
-                                                                        style={[styles.itemToolIcon, {width: 36}]}
-                                                                        onPress={() => handleEventSelection(item)}
-                                                                        >
-                                                                        <Icons type={'dots'} />
-                                                                    </TouchableOpacity>
-                                                                    <TouchableOpacity 
-                                                                        style={styles.itemToolIcon} 
-                                                                        onPress={() => isFavorite(item) ? removeFromFavorites(item) : addToFavorites(item)}
-                                                                        >
-                                                                        <Icons type={isFavorite(item) ? 'fav-black' : 'fav'} />
-                                                                    </TouchableOpacity>
-                                                                </View>
-                                                            </TouchableOpacity>
-                                                        ))
-                                                    }
-                                                </View>
-                                            ) : (
-                                                <View style={styles.noContainer}>
-                                                    <Image source={require('../assets/decor/crown.png')} style={styles.noImage} />
-                                                    {
-                                                        filteredEvents.length === 0 ? (
-                                                                <Text style={styles.noText}>There aren’t any events on selected date</Text>
-                                                        ) : (
-                                                            <Text style={styles.noText}>There aren’t any events you add yet, you can do it now</Text>
-                                                        )
-                                                    }
-                                                    <TouchableOpacity style={styles.noAddBtn} onPress={() => navigation.navigate('AddEventScreen')}>
-                                                        <Text style={styles.noAddBtnText}>Add an event</Text>
-                                                    </TouchableOpacity>
-                                                </View>
-                                            )
-                                        }
-                                    </View>
+                                            </TouchableOpacity>
+                                        ))
+                                    }
+                                </View>
+                            ) : (
+                                <View style={styles.noContainer}>
+                                    <Image source={require('../assets/decor/crown.png')} style={styles.noImage} />
+                                    {
+                                        filteredSignedEvents.length === 0 ? (
+                                                <Text style={styles.noText}>There aren’t any events on selected date</Text>
+                                        ) : (
+                                            <Text style={styles.noText}>There aren’t any events you add yet, you can register it now</Text>
+                                        )
+                                    }
+                                    <TouchableOpacity style={styles.noAddBtn} onPress={() => navigation.navigate('EventsScreen')}>
+                                        <Text style={styles.noAddBtnText}>Go to events</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )
+                        }
 
-                                )
-                            }
-
-                            <View style={{height: 200}} />
-                        </ScrollView>
+                    </ScrollView>
 
                     </View>
-                )
-            }
-
-            {
-                filteredAddedEvents.length > 0 && filterPressed === 'added' && (
-                    <TouchableOpacity style={styles.addBtn} onPress={() => navigation.navigate('AddEventScreen')}>
-                        <Icons type={'plus'} />
-                    </TouchableOpacity>
                 )
             }
 
@@ -422,11 +338,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#f6f6f6',
     },
 
-    title: {
-        fontWeight: '900',
-        fontSize: 28,
-        lineHeight: 33.41,
-        color: '#000'
+    back: {
+        width: 44,
+        height: 44,
     },
 
     calendarBtn: {
@@ -449,7 +363,7 @@ const styles = StyleSheet.create({
 
     title: {
         fontWeight: '900',
-        fontSize: 28,
+        fontSize: 24,
         lineHeight: 33.41,
         color: '#000',
     },
@@ -655,4 +569,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Events;
+export default Signs;

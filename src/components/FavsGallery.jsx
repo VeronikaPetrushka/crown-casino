@@ -65,8 +65,8 @@ const FavsGallery = () => {
                 <View style={styles.noContainer}>
                     <Image source={require('../assets/decor/crown.png')} style={styles.noImage} />
                     <Text style={styles.noText}>You don't have any favorite crowns yet.</Text>
-                    <TouchableOpacity style={styles.noAddBtn} onPress={() => navigation.navigate('HomeScreen')}>
-                        <Text style={styles.noAddBtnText}>Go to Home</Text>
+                    <TouchableOpacity style={styles.noAddBtn} onPress={() => navigation.goBack('')}>
+                        <Text style={styles.noAddBtnText}>Go to Gallery</Text>
                     </TouchableOpacity>
                 </View>
             )}

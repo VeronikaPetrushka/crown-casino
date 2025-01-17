@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView, Modal } from "react-native";
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Icons from './Icons';
@@ -8,13 +8,13 @@ const { height } = Dimensions.get('window');
 const THRESHOLD_HEIGHT = 700;
 const THRESHOLD = height <= THRESHOLD_HEIGHT;
 
-const FavsEvents = () => {
+const FavsSigns = () => {
     const navigation = useNavigation();
     const [favorites, setFavorites] = useState([]);
 
     const fetchFavorites = async () => {
         try {
-            const storedFavorites = await AsyncStorage.getItem('favoriteEvents');
+            const storedFavorites = await AsyncStorage.getItem('favoriteSigns');
             const parsedFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
             setFavorites(parsedFavorites);
         } catch (error) {
@@ -27,7 +27,7 @@ const FavsEvents = () => {
             const updatedFavorites = favorites.filter(fav => fav.name !== item.name);
             setFavorites(updatedFavorites);
 
-            await AsyncStorage.setItem('favoriteEvents', JSON.stringify(updatedFavorites));
+            await AsyncStorage.setItem('favoriteSigns', JSON.stringify(updatedFavorites));
             console.log('Crown removed from favorites!');
         } catch (error) {
             console.error('Error removing crown from favorites:', error);
@@ -53,12 +53,12 @@ const FavsEvents = () => {
                 <ScrollView style={{ width: '100%'}}>
                     {favorites.map((item, index) => (
                        <TouchableOpacity key={index} style={{width: '100%', marginBottom: 24}} onPress={() => navigation.navigate('EventsDetailsScreen', {item: item})}>
-                            <Text style={styles.date}>{item.date}</Text>
-                            <Image source={typeof item.image === 'string' ? { uri: item.image } : item.image} style={styles.image} />
+                            <Text style={styles.date}>{item.item.date}</Text>
+                            <Image source={typeof item.item.image === 'string' ? { uri: item.item.image } : item.item.image} style={styles.image} />
 
                             <View style={{width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
-                                <Text style={styles.name}>{item.name || item.heading}</Text>
-                                <Text style={styles.time}>{item.time}</Text>
+                                <Text style={styles.name}>{item.item.name || item.item.heading}</Text>
+                                <Text style={styles.time}>{item.item.time}</Text>
                             </View>
                             <TouchableOpacity 
                                 style={styles.itemToolIcon} 
@@ -72,9 +72,9 @@ const FavsEvents = () => {
             ) : (
                 <View style={styles.noContainer}>
                     <Image source={require('../assets/decor/crown.png')} style={styles.noImage} />
-                    <Text style={styles.noText}>You don't have any favorite events yet.</Text>
+                    <Text style={styles.noText}>You don't have any favorite registrations yet.</Text>
                     <TouchableOpacity style={styles.noAddBtn} onPress={() => navigation.goBack('')}>
-                        <Text style={styles.noAddBtnText}>Go to Events</Text>
+                        <Text style={styles.noAddBtnText}>Go to Reservations</Text>
                     </TouchableOpacity>
                 </View>
             )}
@@ -188,4 +188,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default FavsEvents;
+export default FavsSigns;

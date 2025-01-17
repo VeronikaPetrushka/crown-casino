@@ -60,6 +60,9 @@ const Icons = ({ type, active, pressed }) => {
     case 'arrow':
       imageSource = require('../assets/icons/arrow.png');
       break;
+    case 'profile-arrow':
+      imageSource = require('../assets/icons/profile-arrow.png');
+      break;
   }
 
   return (

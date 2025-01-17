@@ -24,6 +24,7 @@ const Signup = ({ item , sign}) => {
     
     
         const newSignup = {
+            item,
             user,
             phone
         };
@@ -43,14 +44,14 @@ const Signup = ({ item , sign}) => {
     
             await AsyncStorage.setItem('signed', JSON.stringify(signs));
     
-            console.log(signs);
+            console.log('signs:', signs);
             setSaved(true);
         } catch (error) {
             console.error('Error saving sign up:', error);
             alert('Failed to save the sign up. Please try again.');
         }
     };
-    console.log(item)
+
     return (
         <View style={styles.container}>
 
