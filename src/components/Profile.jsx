@@ -71,7 +71,7 @@ const Profile = () => {
     };    
 
     const handlePrivacyPolicy = () => {
-        const url = 'https://www.termsfeed.com/live/74c920d7-ff20-4c09-b142-3ddad1d96525';
+        const url = 'https://www.termsfeed.com/live/c3642e4a-b520-45e9-b604-7eddae267de7';
         Linking.openURL(url).catch((err) => console.error('Failed to open URL:', err));
     };    
     
