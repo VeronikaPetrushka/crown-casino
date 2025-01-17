@@ -50,10 +50,6 @@ const Profile = () => {
     };
 
     const handleSave = async () => {
-        if (!name || !image) {
-            alert('Please provide both a name and an image to save your profile.');
-            return;
-        }
     
         const profileData = {
             name,
@@ -99,8 +95,10 @@ const Profile = () => {
                 {
                     saved ? (
                         <View style={{alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', width: '100%'}}>
-                            <Image source={{ uri: image }} style={{width: 100, height: 100, marginRight: 20}} />
-                            <Text style={[styles.title, {fontSize: 24, fontWeight: '700'}]}>{name}</Text>
+                            <View style={[styles.imageContainer, {marginRight: 20}]}>
+                                <Image source={{ uri: image }} style={styles.uploadedImage} />
+                            </View>
+                            <Text style={[styles.title, {fontSize: 24, fontWeight: '700'}]}>{name || 'User'}</Text>
                         </View>
 
                     ) : (

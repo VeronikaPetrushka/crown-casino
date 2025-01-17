@@ -90,7 +90,7 @@ const Favs = () => {
                 <Text style={styles.title}>Your Favorites</Text>
             </View>
 
-            {favorites.length > 0 ? (
+            {favorites?.length > 0 ? (
                 <ScrollView style={{ width: '100%'}}>
                     {favorites.map((crown, index) => (
                         <TouchableOpacity key={index} style={styles.crownItem} onPress={() => navigation.navigate('DetailsScreen', {crown: crown})}>
@@ -113,7 +113,7 @@ const Favs = () => {
                                 </View>
                                 <View style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row' }}>
                                     <Text style={[styles.crownDescription, { width: 200 }]} numberOfLines={1} ellipsizeMode='tail'>{crown.description}</Text>
-                                    <Text style={styles.crownDescription}>{crown.jewels.length} items</Text>
+                                    <Text style={styles.crownDescription}>{crown.jewels?.length} items</Text>
                                 </View>
                             </View>
                         </TouchableOpacity>

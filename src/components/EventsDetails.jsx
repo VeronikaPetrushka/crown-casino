@@ -92,6 +92,8 @@ const EventsDetails = ({ item }) => {
                 )
             }
 
+            <View style={{height: 85}} />
+
             </ScrollView>
 
             {/* {

@@ -99,7 +99,8 @@ const Signs = () => {
                 await AsyncStorage.setItem('signed', JSON.stringify(updatedAddedEvents));
                 await AsyncStorage.setItem('favoriteSigns', JSON.stringify(updatedFavorites));
     
-                console.log('Event and its favorite entry deleted successfully!');
+                await fetchSignedEvents();
+                
                 setModalVisible(false);
             } catch (error) {
                 console.error('Error deleting event or favorite:', error);
