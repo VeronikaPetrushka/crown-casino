@@ -12,8 +12,8 @@ const AddEvent = ({ event }) => {
     const navigation = useNavigation();
     const [heading, setHeading] = useState(event ? event.heading : '');
     const [description, setDescription] = useState(event ? event.description : '');
-    const [date, setDate] = useState(event ? event.heading : '');
-    const [time, setTime] = useState(event ? event.heading : '');
+    const [date, setDate] = useState(event ? event.date : '');
+    const [time, setTime] = useState(event ? event.time : '');
     const [image, setImage] = useState(event ? event.image : null);
     const [saved, setSaved] = useState(false);
     const [dateError, setDateError] = useState('');
