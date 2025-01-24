@@ -28,6 +28,7 @@ const Icons = ({ type, active, pressed }) => {
       break;
     case 'fav-black':
       imageSource = require('../assets/icons/fav-black.png');
+      if (active) iconStyle.push(styles.active);
       break;
     case 'cross':
       imageSource = require('../assets/icons/cross.png');
@@ -41,27 +42,38 @@ const Icons = ({ type, active, pressed }) => {
     case 'calendar':
       imageSource = require('../assets/icons/calendar.png');
       pressed && iconStyle.push(pressed);
+      if (active) iconStyle.push(styles.active);
       break;
     case 'calendar2':
       imageSource = require('../assets/icons/calendar2.png');
       break;
     case 'date':
       imageSource = require('../assets/icons/date.png');
+      if (active) iconStyle.push(styles.active);
       break;
     case 'time':
       imageSource = require('../assets/icons/time.png');
+      if (active) iconStyle.push(styles.active);
       break;
     case 'plus':
       imageSource = require('../assets/icons/plus.png');
+      if (active) iconStyle.push(styles.active);
       break;
     case 'back':
       imageSource = require('../assets/icons/back.png');
+      if (active) iconStyle.push(styles.active);
+      break;
+    case 'done':
+      imageSource = require('../assets/decor/done.png');
+      if (active) iconStyle.push(styles.active);
       break;
     case 'arrow':
       imageSource = require('../assets/icons/arrow.png');
+      if (active) iconStyle.push(styles.active);
       break;
     case 'profile-arrow':
       imageSource = require('../assets/icons/profile-arrow.png');
+      if (active) iconStyle.push(styles.active);
       break;
   }
 
@@ -83,7 +95,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     objectFit: 'cover',
-    tintColor: '#000',
+    tintColor: '#f7d671',
   },
   pressed: {
     width: '100%',

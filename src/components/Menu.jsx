@@ -30,7 +30,7 @@ const Menu = () => {
                     onPress={() => handleNavigate('HomeScreen')}>
                     <Icons type={'1'} active={activeButton === 'HomeScreen'}/>
                 </TouchableOpacity>
-                <Text style={[styles.btnText, activeButton === 'HomeScreen' && {color: '#000'}]}>Home</Text>
+                <Text style={[styles.btnText, activeButton === 'HomeScreen' && {color: '#f7d671'}]}>Home</Text>
             </View>
 
             <View style={styles.btnContainer}>
@@ -39,7 +39,7 @@ const Menu = () => {
                     onPress={() => handleNavigate('GalleryScreen')}>
                     <Icons type={'2'} active={activeButton === 'GalleryScreen'}/>
                 </TouchableOpacity>
-                <Text style={[styles.btnText, activeButton === 'GalleryScreen' && {color: '#000'}]}>Gallery</Text>
+                <Text style={[styles.btnText, activeButton === 'GalleryScreen' && {color: '#f7d671'}]}>Gallery</Text>
             </View>
 
             <View style={styles.btnContainer}>
@@ -48,7 +48,7 @@ const Menu = () => {
                     onPress={() => handleNavigate('EventsScreen')}>
                     <Icons type={'3'} active={activeButton === 'EventsScreen'}/>
                 </TouchableOpacity>
-                <Text style={[styles.btnText, activeButton === 'EventsScreen' && {color: '#000'}]}>Events</Text>
+                <Text style={[styles.btnText, activeButton === 'EventsScreen' && {color: '#f7d671'}]}>Events</Text>
             </View>
 
             <View style={styles.btnContainer}>
@@ -57,7 +57,7 @@ const Menu = () => {
                     onPress={() => handleNavigate('ProfileScreen')}>
                     <Icons type={'4'} active={activeButton === 'ProfileScreen'}/>
                 </TouchableOpacity>
-                <Text style={[styles.btnText, activeButton === 'ProfileScreen' && {color: '#000'}]}>Profile</Text>
+                <Text style={[styles.btnText, activeButton === 'ProfileScreen' && {color: '#f7d671'}]}>Profile</Text>
             </View>
 
         </View>
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
         paddingVertical: 20,
         flexDirection: 'row',
-        backgroundColor: '#fff',
+        backgroundColor: '#120900',
         alignSelf: "center",
     },
     

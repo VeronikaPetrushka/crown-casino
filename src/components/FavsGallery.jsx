@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView, Modal } from "react-native";
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView, ImageBackground } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Icons from './Icons';
@@ -41,37 +41,41 @@ const FavsGallery = () => {
     );
 
     return (
-        <View style={styles.container}>
-            <View style={styles.upperContainer}>
-                <TouchableOpacity style={styles.back} onPress={() => navigation.goBack('')}>
-                            <Icons type={'back'} />
-                </TouchableOpacity>
-                <Text style={styles.title}>Your Favorites</Text>
-            </View>
-
-            {favorites.length > 0 ? (
-                <ScrollView style={{ width: '100%'}}>
-                    {favorites.map((item, index) => (
-                        <TouchableOpacity key={index} style={{width: '100%', marginBottom: 24}} onPress={() => navigation.navigate('GalleryDetailsScreen', {item: item})}>
-                            <TouchableOpacity style={styles.itemToolIcon} onPress={() => removeFromFavorites(item)}>
-                                <Icons type={'fav-black'} />
-                            </TouchableOpacity>
-                            <Image source={item.image} style={styles.image} />
-                            <Text style={styles.name}>{item.name}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
-            ) : (
-                <View style={styles.noContainer}>
-                    <Image source={require('../assets/decor/crown.png')} style={styles.noImage} />
-                    <Text style={styles.noText}>You don't have any favorite crowns yet.</Text>
-                    <TouchableOpacity style={styles.noAddBtn} onPress={() => navigation.goBack('')}>
-                        <Text style={styles.noAddBtnText}>Go to Gallery</Text>
+        <ImageBackground source={require('../assets/back.png')} style={{flex: 1}}>
+            <View style={styles.container}>
+                <View style={styles.upperContainer}>
+                    <TouchableOpacity style={styles.back} onPress={() => navigation.goBack('')}>
+                        <Icons type={'back'} active />
                     </TouchableOpacity>
+                    <Text style={styles.title}>Your Favorites</Text>
                 </View>
-            )}
 
-        </View>
+                {favorites.length > 0 ? (
+                    <ScrollView style={{ width: '100%'}}>
+                        {favorites.map((item, index) => (
+                            <TouchableOpacity key={index} style={{width: '100%', marginBottom: 24}} onPress={() => navigation.navigate('GalleryDetailsScreen', {item: item})}>
+                                <TouchableOpacity style={styles.itemToolIcon} onPress={() => removeFromFavorites(item)}>
+                                    <Icons type={'fav-black'} active />
+                                </TouchableOpacity>
+                                <Image source={item.image} style={styles.image} />
+                                <Text style={{color: '#f7d671'}}>{item.name}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                ) : (
+                    <View style={styles.noContainer}>
+                        <View style={styles.noImage}>
+                            <Icons type={'1'} active />
+                        </View>
+                        <Text style={styles.noText}>You don't have any favorite crowns yet.</Text>
+                        <TouchableOpacity style={styles.noAddBtn} onPress={() => navigation.goBack('')}>
+                            <Text style={styles.noAddBtnText}>Go to Gallery</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
+
+            </View>
+        </ImageBackground>
     );
 };
 
@@ -79,7 +83,6 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#fdf8ea',
         alignItems: 'center',
         justifyContent: 'flex-start',
         padding: 16,
@@ -111,7 +114,7 @@ const styles = StyleSheet.create({
         fontWeight: '900',
         fontSize: 28,
         lineHeight: 33.41,
-        color: '#000',
+        color: '#f7d671',
     },
 
     itemToolIcon: {
@@ -127,7 +130,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         fontSize: 16,
         lineHeight: 19,
-        color: '#000',
+        color: '#f7d671',
     },
 
     noContainer: {
@@ -138,8 +141,8 @@ const styles = StyleSheet.create({
     },
 
     noImage: {
-        width: 130,
-        height: 130,
+        width: 80,
+        height: 80,
         marginBottom: 24,
     },
 
@@ -147,7 +150,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         fontSize: 13,
         lineHeight: 15,
-        color: '#000',
+        color: '#f7d671',
         textAlign: 'center',
         marginBottom: 24
     },
@@ -159,8 +162,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderWidth: 1,
         borderRadius: 20,
-        borderColor: '#000',
-        backgroundColor: '#fdf8ea'
+        borderColor: '#f7d671',
+        backgroundColor: '#f7d671'
     },
 
     noAddBtnText: {

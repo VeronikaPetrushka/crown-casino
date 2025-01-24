@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView, ImageBackground } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import gallery from '../constants/gallery';
@@ -58,34 +58,36 @@ const Gallery = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <ImageBackground source={require('../assets/back.png')} style={{flex: 1}}>
+            <View style={styles.container}>
 
-            <View style={styles.upperContainer}>
-                <Text style={styles.title}>Crowns gallery</Text>
-                <TouchableOpacity style={styles.favBtn} onPress={() => navigation.navigate('FavsGalleryScreen')}>
-                    <Icons type={'fav'} />
-                </TouchableOpacity>
-            </View>
+                <View style={styles.upperContainer}>
+                    <Text style={styles.title}>Crowns gallery</Text>
+                    <TouchableOpacity style={styles.favBtn} onPress={() => navigation.navigate('FavsGalleryScreen')}>
+                        <Icons type={'fav'} />
+                    </TouchableOpacity>
+                </View>
 
-            <ScrollView style={{width: '100%'}}>
-                {
-                    gallery.map((item, index) => (
-                        <TouchableOpacity key={index} style={{width: '100%', marginBottom: 24}} onPress={() => navigation.navigate('GalleryDetailsScreen', {item: item})}>
-                            <Image source={item.image} style={styles.image} />
+                <ScrollView style={{width: '100%'}}>
+                    {
+                        gallery.map((item, index) => (
+                            <TouchableOpacity key={index} style={{width: '100%', marginBottom: 24}} onPress={() => navigation.navigate('GalleryDetailsScreen', {item: item})}>
+                                <Image source={item.image} style={styles.image} />
 
-                            <Text style={styles.name}>{item.name}</Text>
-                            <TouchableOpacity 
-                                style={styles.itemToolIcon} 
-                                onPress={() => isFavorite(item) ? removeFromFavorites(item) : addToFavorites(item)}
-                                >
-                                <Icons type={isFavorite(item) ? 'fav-black' : 'fav'} />
+                                <Text style={{color: '#f7d671'}}>{item.name}</Text>
+                                <TouchableOpacity 
+                                    style={styles.itemToolIcon} 
+                                    onPress={() => isFavorite(item) ? removeFromFavorites(item) : addToFavorites(item)}
+                                    >
+                                    <Icons type={isFavorite(item) ? 'fav-black' : 'fav'} active={isFavorite(item)}  />
+                                </TouchableOpacity>
                             </TouchableOpacity>
-                        </TouchableOpacity>
-                    ))
-                }
-            </ScrollView>
+                        ))
+                    }
+                </ScrollView>
 
-        </View>
+            </View>
+        </ImageBackground>
     );
 };
 
@@ -93,7 +95,6 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#fff',
         padding: 16,
         paddingTop: height * 0.07,
         paddingBottom: 85,
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
         fontWeight: '900',
         fontSize: 28,
         lineHeight: 33.41,
-        color: '#000'
+        color: '#f7d671'
     },
 
     favBtn: {
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
         fontWeight: '900',
         fontSize: 28,
         lineHeight: 33.41,
-        color: '#000',
+        color: '#f7d671',
     },
 
     itemToolIcon: {
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         fontSize: 16,
         lineHeight: 19,
-        color: '#000',
+        color: '#f7d671',
     },
 
 });

@@ -1,6 +1,6 @@
 // jewels refresh fix
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView , Modal} from "react-native";
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView , Modal, ImageBackground } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Icons from './Icons';
@@ -132,199 +132,201 @@ const Details = ({ crown }) => {
     }
 
     return (
-        <View style={styles.container} key={refreshKey}>
+        <ImageBackground source={require('../assets/back.png')} style={{flex: 1}}>
+            <View style={styles.container} key={refreshKey}>
 
-            <View style={styles.upperContainer}>
-                <TouchableOpacity style={styles.back} onPress={() => navigation.goBack('')}>
-                        <Icons type={'back'} />
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    style={[styles.crownToolIcon, {width: 36}]}
-                    onPress={() => handleCrownSelection(crown)}
-                    >
-                        <Icons type={'dots'} />
-                </TouchableOpacity>
-            </View>
+                <View style={styles.upperContainer}>
+                    <TouchableOpacity style={styles.back} onPress={() => navigation.goBack('')}>
+                            <Icons type={'back'} />
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        style={[styles.crownToolIcon, {width: 36}]}
+                        onPress={() => handleCrownSelection(crown)}
+                        >
+                            <Icons type={'dots'} />
+                    </TouchableOpacity>
+                </View>
 
-            <Image source={{ uri: crown.image}} style={styles.image} />
+                <Image source={{ uri: crown.image}} style={styles.image} />
 
-            <View style={styles.headingContainer}>
-                <Text style={styles.heading}>{crown.heading}</Text>
-                <TouchableOpacity 
-                    style={styles.crownToolIcon} 
-                    onPress={() => isFavorite(crown) ? removeFromFavorites(crown) : addToFavorites(crown)}
-                    >
-                    <Icons type={isFavorite(crown) ? 'fav-black' : 'fav'} />
-                </TouchableOpacity>
-            </View>
+                <View style={styles.headingContainer}>
+                    <Text style={styles.heading}>{crown.heading}</Text>
+                    <TouchableOpacity 
+                        style={styles.crownToolIcon} 
+                        onPress={() => isFavorite(crown) ? removeFromFavorites(crown) : addToFavorites(crown)}
+                        >
+                        <Icons type={isFavorite(crown) ? 'fav-black' : 'fav'} />
+                    </TouchableOpacity>
+                </View>
 
 
-            <ScrollView style={{width: '100%', paddingHorizontal: 16}}>
+                <ScrollView style={{width: '100%', paddingHorizontal: 16}}>
 
-                {
-                    jewelsMore ? (
-                        <View style={{width: '100%'}}>
-                            <TouchableOpacity 
-                                    style={{flexDirection: 'row', alignItems: 'center', marginBottom: 24}} 
-                                    onPress={() => setJewelsMore(false)}
-                                >
-                                <View style={{width: 10, height: 20, marginRight: 5, transform: [{ rotate: '180deg' }]}}>
-                                    <Icons type={'arrow'} />
-                                </View>
-                                <Text>{crown.jewels.length} items</Text>
-                            </TouchableOpacity>
-
-                            {
-                                crown.jewels.length > 0 ? (
-                                    <>
-                                        {
-                                            crown.jewels.map((jewel, index) => (
-                                                <View key={index} style={[styles.jewelContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
-                                                    <Text style={styles.jewelHeading}>{jewel.heading}</Text>
-                                                    <Text style={styles.description}>{jewel.description}</Text>
-                                                </View>
-                                            ))
-                                        }
-                                    </>
-                                ) : (
-                                    <Text style={[styles.description, {alignSelf: 'center', textAlign: 'center'}]}>You haven't added any jewels yet...</Text>
-                                )
-                            }
-                        </View>
-                        ) : (
+                    {
+                        jewelsMore ? (
                             <View style={{width: '100%'}}>
-
                                 <TouchableOpacity 
-                                    style={{flexDirection: 'row', alignItems: 'center', marginBottom: 24}} 
-                                    onPress={() => setJewelsMore(true)}
-                                >
-                                    <Text style={styles.itemsText}>{crown.jewels.length} items</Text>
-                                    <View style={{width: 10, height: 20, marginLeft: 5}}>
-                                        <Icons type={'arrow'} />
+                                        style={{flexDirection: 'row', alignItems: 'center', marginBottom: 24}} 
+                                        onPress={() => setJewelsMore(false)}
+                                    >
+                                    <View style={{width: 10, height: 20, marginRight: 5, transform: [{ rotate: '180deg' }]}}>
+                                        <Icons type={'arrow'} active />
                                     </View>
+                                    <Text>{crown.jewels.length} items</Text>
                                 </TouchableOpacity>
 
-                                <Text style={styles.description}>{crown.description}</Text>
-
-                                {crown.jewels.length > 0 && (
-                                    <View style={{width: '100%'}}>
-                                        <Text style={styles.jewelsTitle}>Jewels and special items</Text>
-                                        {
-                                            crown.jewels.map((jewel, index) => (
-                                                <View key={index} style={styles.jewelContainer}>
-                                                    <View>
+                                {
+                                    crown.jewels.length > 0 ? (
+                                        <>
+                                            {
+                                                crown.jewels.map((jewel, index) => (
+                                                    <View key={index} style={[styles.jewelContainer, {flexDirection: 'column', alignItems: 'flex-start'}]}>
                                                         <Text style={styles.jewelHeading}>{jewel.heading}</Text>
-                                                        <Text style={styles.jewelDesc} numberOfLines={1} ellipsizeMode='tail'>{jewel.description}</Text>
+                                                        <Text style={styles.description}>{jewel.description}</Text>
                                                     </View>
-                                                    <TouchableOpacity 
-                                                        style={styles.deleteBtn}
-                                                        onPress={() => {
-                                                        setSelectedJewel(jewel);
-                                                        setModalVisible(true);
-                                                    }}>
-                                                        <Text style={styles.deleteBtnText}>Delete</Text>
-                                                    </TouchableOpacity>
-                                                </View>
-                                            ))
-                                        }
-                                    </View>
+                                                ))
+                                            }
+                                        </>
+                                    ) : (
+                                        <Text style={[styles.description, {alignSelf: 'center', textAlign: 'center'}]}>You haven't added any jewels yet...</Text>
                                     )
                                 }
-                        </View>
-                    )
-                }
+                            </View>
+                            ) : (
+                                <View style={{width: '100%'}}>
+
+                                    <TouchableOpacity 
+                                        style={{flexDirection: 'row', alignItems: 'center', marginBottom: 24}} 
+                                        onPress={() => setJewelsMore(true)}
+                                    >
+                                        <Text style={styles.itemsText}>{crown.jewels.length} items</Text>
+                                        <View style={{width: 10, height: 20, marginLeft: 5}}>
+                                            <Icons type={'arrow'} active />
+                                        </View>
+                                    </TouchableOpacity>
+
+                                    <Text style={styles.description}>{crown.description}</Text>
+
+                                    {crown.jewels.length > 0 && (
+                                        <View style={{width: '100%'}}>
+                                            <Text style={styles.jewelsTitle}>Jewels and special items</Text>
+                                            {
+                                                crown.jewels.map((jewel, index) => (
+                                                    <View key={index} style={styles.jewelContainer}>
+                                                        <View>
+                                                            <Text style={styles.jewelHeading}>{jewel.heading}</Text>
+                                                            <Text style={styles.jewelDesc} numberOfLines={1} ellipsizeMode='tail'>{jewel.description}</Text>
+                                                        </View>
+                                                        <TouchableOpacity 
+                                                            style={styles.deleteBtn}
+                                                            onPress={() => {
+                                                            setSelectedJewel(jewel);
+                                                            setModalVisible(true);
+                                                        }}>
+                                                            <Text style={styles.deleteBtnText}>Delete</Text>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                ))
+                                            }
+                                        </View>
+                                        )
+                                    }
+                            </View>
+                        )
+                    }
 
 
-            </ScrollView>
+                </ScrollView>
 
-            <Modal
-                    transparent={true}
-                    animationType="fade"
-                    visible={dotsModalVisible}
-                    onRequestClose={() => setDotsModalVisible(false)}
-                >
-                    <View style={[styles.modalContainer, {justifyContent: 'flex-end'}]}>
-                        <View style={styles.modalContentDots}>
-                            <View style={styles.modalBtnsContainer}>
+                <Modal
+                        transparent={true}
+                        animationType="fade"
+                        visible={dotsModalVisible}
+                        onRequestClose={() => setDotsModalVisible(false)}
+                    >
+                        <View style={[styles.modalContainer, {justifyContent: 'flex-end'}]}>
+                            <View style={styles.modalContentDots}>
+                                <View style={styles.modalBtnsContainer}>
+                                    <TouchableOpacity
+                                        style={styles.modalButton}
+                                        onPress={handleEdit}
+                                    >
+                                        <Text 
+                                            style={[styles.modalButtonText, {borderTopWidth: 0, fontWeight: '400', color: '#000'}]}>
+                                                Edit
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.modalButton}
+                                        onPress={handleDeleteDots}
+                                    >
+                                        <Text style={[styles.modalButtonText, {fontWeight: '400'}]}>Delete</Text>
+                                    </TouchableOpacity>
+                                </View>
                                 <TouchableOpacity
-                                    style={styles.modalButton}
-                                    onPress={handleEdit}
+                                    style={styles.dotsCancelBtn}
+                                    onPress={() => setDotsModalVisible(false)}
                                 >
-                                    <Text 
-                                        style={[styles.modalButtonText, {borderTopWidth: 0, fontWeight: '400', color: '#000'}]}>
-                                            Edit
-                                    </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={styles.modalButton}
-                                    onPress={handleDeleteDots}
-                                >
-                                    <Text style={[styles.modalButtonText, {fontWeight: '400'}]}>Delete</Text>
+                                    <Text style={styles.dotsCancelBtnText}>Cancel</Text>
                                 </TouchableOpacity>
                             </View>
-                            <TouchableOpacity
-                                style={styles.dotsCancelBtn}
-                                onPress={() => setDotsModalVisible(false)}
-                            >
-                                <Text style={styles.dotsCancelBtnText}>Cancel</Text>
-                            </TouchableOpacity>
                         </View>
-                    </View>
-                </Modal>
+                    </Modal>
 
-                <Modal
-                    transparent={true}
-                    animationType="fade"
-                    visible={crownModalVisible}
-                    onRequestClose={() => setCrownModalVisible(false)}
-                >
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalContent}>
-                            <Text style={styles.modalTitle}>Delete the crown ?</Text>
-                            <Text style={styles.modalText}>{`Are you sure you want to delete ${selectedCrownToDelete?.heading}?`}</Text>
-                            <TouchableOpacity
-                                style={styles.modalButton}
-                                onPress={deleteCrown}
-                            >
-                                <Text style={styles.modalButtonText}>Delete</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={{width: '100%', paddingVertical: 11, alignItems: 'center', justifyContent: 'center'}}
-                                onPress={() => setCrownModalVisible(false)}
-                            >
-                                <Text style={[styles.modalButtonText, {fontWeight: '400', color: '#000'}]}>Close</Text>
-                            </TouchableOpacity>
+                    <Modal
+                        transparent={true}
+                        animationType="fade"
+                        visible={crownModalVisible}
+                        onRequestClose={() => setCrownModalVisible(false)}
+                    >
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                                <Text style={styles.modalTitle}>Delete the crown ?</Text>
+                                <Text style={styles.modalText}>{`Are you sure you want to delete ${selectedCrownToDelete?.heading}?`}</Text>
+                                <TouchableOpacity
+                                    style={styles.modalButton}
+                                    onPress={deleteCrown}
+                                >
+                                    <Text style={styles.modalButtonText}>Delete</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{width: '100%', paddingVertical: 11, alignItems: 'center', justifyContent: 'center'}}
+                                    onPress={() => setCrownModalVisible(false)}
+                                >
+                                    <Text style={[styles.modalButtonText, {fontWeight: '400', color: '#000'}]}>Close</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
-                </Modal>
+                    </Modal>
 
-                <Modal
-                    transparent={true}
-                    animationType="fade"
-                    visible={modalVisible}
-                    onRequestClose={() => setModalVisible(false)}
-                >
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalContent}>
-                            <Text style={styles.modalTitle}>Delete the jewel ?</Text>
-                            <Text style={styles.modalText}>{`Are you sure you want to delete ${selectedJewel?.heading}?`}</Text>
-                            <TouchableOpacity
-                                style={styles.modalButton}
-                                onPress={() => deleteJewel(selectedJewel)}
-                            >
-                                <Text style={styles.modalButtonText}>Delete</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={{width: '100%', paddingVertical: 11, alignItems: 'center', justifyContent: 'center'}}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={[styles.modalButtonText, {fontWeight: '400', color: '#000'}]}>Close</Text>
-                            </TouchableOpacity>
+                    <Modal
+                        transparent={true}
+                        animationType="fade"
+                        visible={modalVisible}
+                        onRequestClose={() => setModalVisible(false)}
+                    >
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                                <Text style={styles.modalTitle}>Delete the jewel ?</Text>
+                                <Text style={styles.modalText}>{`Are you sure you want to delete ${selectedJewel?.heading}?`}</Text>
+                                <TouchableOpacity
+                                    style={styles.modalButton}
+                                    onPress={() => deleteJewel(selectedJewel)}
+                                >
+                                    <Text style={styles.modalButtonText}>Delete</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{width: '100%', paddingVertical: 11, alignItems: 'center', justifyContent: 'center'}}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <Text style={[styles.modalButtonText, {fontWeight: '400', color: '#000'}]}>Close</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
-                </Modal>
-           
-        </View>
+                    </Modal>
+            
+            </View>
+        </ImageBackground>
     );
 };
 
@@ -332,7 +334,6 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'flex-start',
     },
@@ -352,7 +353,7 @@ const styles = StyleSheet.create({
     back: {
         width: 28,
         height: 24,
-        backgroundColor: '#fff',
+        backgroundColor: '#f7d671',
     },
 
     image: {
@@ -366,7 +367,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 34,
         lineHeight: 41,
-        color: '#000',
+        color: '#f7d671',
     },
 
     crownToolIcon: {
@@ -387,14 +388,14 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         fontSize: 16,
         lineHeight: 19,
-        color: '#000',
+        color: '#f7d671',
     },
 
     description: {
         fontWeight: '400',
         fontSize: 16,
         lineHeight: 19,
-        color: '#000',
+        color: '#f7d671',
         marginBottom: 32
     },
 
@@ -402,7 +403,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 18,
         lineHeight: 21.5,
-        color: '#000',
+        color: '#f7d671',
         marginBottom: 12
     },
 
@@ -418,7 +419,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 16,
         lineHeight: 19,
-        color: '#000',
+        color: '#f7d671',
         marginBottom: 6,
         width: 200
     },
@@ -436,7 +437,7 @@ const styles = StyleSheet.create({
         padding: 7,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#ececec',
+        backgroundColor: '#f7d671',
         borderRadius: 20
     },
 

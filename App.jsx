@@ -31,17 +31,27 @@ const App = () => {
 
     const loaderAnim = useRef(new Animated.Value(0)).current;
 
-    const loaderImg = require('./src/assets/loaders/1.png');
+    const firstLoaderImage = require('./src/assets/loaders/1.png');
+    const secondLoaderImage = require('./src/assets/loaders/2.png');
 
-    const [currentLoader, setCurrentLoader] = useState(loaderImg);
+    const [currentLoader, setCurrentLoader] = useState(firstLoaderImage);
     useEffect(() => {
         Animated.timing(loaderAnim, {
             toValue: 1,
-            duration: 2000,
+            duration: 1500,
             useNativeDriver: true,
         }).start(() => {
+            setCurrentLoader(secondLoaderImage);
+
+            loaderAnim.setValue(0);
+            Animated.timing(loaderAnim, {
+                toValue: 1,
+                duration: 2000,
+                useNativeDriver: true,
+            }).start(() => {
                 setLoaderIsEnded(true);
             });
+        });
     }, []);
 
   return (

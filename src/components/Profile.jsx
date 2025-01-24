@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { View, Text, TouchableOpacity, Image, TextInput, Dimensions, StyleSheet, Linking } from "react-native"
+import { View, Text, TouchableOpacity, Image, TextInput, Dimensions, StyleSheet, Linking, ImageBackground } from "react-native"
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -76,90 +76,92 @@ const Profile = () => {
     };    
     
     return (
-        <View style={styles.container}>
+        <ImageBackground source={require('../assets/back.png')} style={{flex: 1}}>
+            <View style={styles.container}>
 
-            <View style={[styles.upperContainer, !saved && {justifyContent: 'center'}]}>
-                <Text style={styles.title}>Profile</Text>
-                {
-                    saved && (
-                        <TouchableOpacity onPress={() => setSaved(false)}>
-                            <Text style={{fontSize: 18}}>Edit</Text>
-                        </TouchableOpacity>
-                    )
-                }
-            </View>
+                <View style={[styles.upperContainer, !saved && {justifyContent: 'center'}]}>
+                    <Text style={styles.title}>Profile</Text>
+                    {
+                        saved && (
+                            <TouchableOpacity onPress={() => setSaved(false)}>
+                                <Text style={{fontSize: 18, color: '#f7d671'}}>Edit</Text>
+                            </TouchableOpacity>
+                        )
+                    }
+                </View>
 
 
-            <View style={{width: '100%', paddingHorizontal: 16, marginBottom: 24}}>
+                <View style={{width: '100%', paddingHorizontal: 16, marginBottom: 24}}>
 
-                {
-                    saved ? (
-                        <View style={{alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', width: '100%'}}>
-                            <View style={[styles.imageContainer, {marginRight: 20}]}>
-                                <Image source={{ uri: image }} style={styles.uploadedImage} />
+                    {
+                        saved ? (
+                            <View style={{alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row', width: '100%'}}>
+                                <View style={[styles.imageContainer, {marginRight: 20}]}>
+                                    <Image source={{ uri: image }} style={styles.uploadedImage} />
+                                </View>
+                                <Text style={[styles.title, {fontSize: 24, fontWeight: '700'}]}>{name || 'User'}</Text>
                             </View>
-                            <Text style={[styles.title, {fontSize: 24, fontWeight: '700'}]}>{name || 'User'}</Text>
-                        </View>
 
-                    ) : (
-                        <View style={{width: '100%', alignItems: 'center'}}>
-                            <View style={styles.imageContainer}>
-                                    {image ? (
-                                        <>
-                                            <Image source={{ uri: image }} style={[styles.uploadedImage, {alignSelf: 'center'}]} />
-                                            <TouchableOpacity style={styles.crossImg} onPress={resetImage}>
+                        ) : (
+                            <View style={{width: '100%', alignItems: 'center'}}>
+                                <View style={styles.imageContainer}>
+                                        {image ? (
+                                            <>
+                                                <Image source={{ uri: image }} style={[styles.uploadedImage, {alignSelf: 'center'}]} />
+                                                <TouchableOpacity style={styles.crossImg} onPress={resetImage}>
+                                                    <Icons type={'cross'} />
+                                                </TouchableOpacity>
+                                            </>
+                                        ) : (
+                                            <TouchableOpacity style={styles.add} onPress={handleImagePicker}>
+                                                <Icons type={'plus'} active />
+                                            </TouchableOpacity>
+                                        )}
+                                    </View>
+
+
+                                    <Text style={styles.label}>Your name</Text>
+                                    <View style={styles.inputContainer}>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Name"
+                                            placeholderTextColor="#999"
+                                            value={name}
+                                            onChangeText={setName}
+                                        />
+                                        {name ? (
+                                            <TouchableOpacity style={styles.cross} onPress={() => resetInput(setName)}>
                                                 <Icons type={'cross'} />
                                             </TouchableOpacity>
-                                        </>
-                                    ) : (
-                                        <TouchableOpacity style={styles.add} onPress={handleImagePicker}>
-                                            <Icons type={'plus'} />
-                                        </TouchableOpacity>
-                                    )}
-                                </View>
+                                        ) : null}
+                                    </View>
+                                    
 
+                                <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
+                                    <Text style={styles.saveBtnText}>Save</Text>
+                                </TouchableOpacity>
 
-                                <Text style={styles.label}>Your name</Text>
-                                <View style={styles.inputContainer}>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="Name"
-                                        placeholderTextColor="#999"
-                                        value={name}
-                                        onChangeText={setName}
-                                    />
-                                    {name ? (
-                                        <TouchableOpacity style={styles.cross} onPress={() => resetInput(setName)}>
-                                            <Icons type={'cross'} />
-                                        </TouchableOpacity>
-                                    ) : null}
-                                </View>
-                                
+                            </View>
+                        )
+                    }
 
-                            <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-                                <Text style={styles.saveBtnText}>Save</Text>
-                            </TouchableOpacity>
+                </View>
 
-                        </View>
-                    )
-                }
+                <View style={styles.btn}>
+                    <Text style={styles.btnText}>Reservations</Text>
+                    <TouchableOpacity style={styles.arrowIcon} onPress={() => navigation.navigate('SignsScreen')}>
+                        <Icons type={'profile-arrow'} active />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.btn}>
+                    <Text style={styles.btnText}>Privacy Policy</Text>
+                    <TouchableOpacity style={styles.arrowIcon} onPress={handlePrivacyPolicy}>
+                        <Icons type={'profile-arrow'} active />
+                    </TouchableOpacity>
+                </View>
 
             </View>
-
-            <View style={styles.btn}>
-                <Text style={styles.btnText}>Reservations</Text>
-                <TouchableOpacity style={styles.arrowIcon} onPress={() => navigation.navigate('SignsScreen')}>
-                    <Icons type={'profile-arrow'} />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.btn}>
-                <Text style={styles.btnText}>Privacy Policy</Text>
-                <TouchableOpacity style={styles.arrowIcon} onPress={handlePrivacyPolicy}>
-                    <Icons type={'profile-arrow'} />
-                </TouchableOpacity>
-            </View>
-
-        </View>
+        </ImageBackground>
     )
 };
 
@@ -167,7 +169,6 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'flex-start'
     },
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
         fontWeight: '900',
         fontSize: 28,
         lineHeight: 33.41,
-        color: '#000'
+        color: '#f7d671'
     },
 
     label: {
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start', 
         marginBottom: 16, 
         lineHeight: 23.87, 
-        color: '#000'
+        color: '#f7d671'
     },
 
     inputContainer: {
@@ -214,10 +215,9 @@ const styles = StyleSheet.create({
         width: '100%',
         fontSize: 16,
         fontWeight: '400',
-        color: '#000',
-        backgroundColor: '#fff',
+        color: '#f7d671',
         borderWidth: 1,
-        borderColor: '#000',
+        borderColor: '#f7d671',
         paddingHorizontal: 20,
         paddingVertical: 16.5,
     },
@@ -234,7 +234,6 @@ const styles = StyleSheet.create({
     imageContainer: {
         width: 100,
         height: 100,
-        backgroundColor: '#fdf8ea',
         borderWidth: 1,
         borderColor: "#999",
         marginBottom: 24,
@@ -262,7 +261,7 @@ const styles = StyleSheet.create({
 
     saveBtn: {
         width: '100%',
-        backgroundColor: '#000',
+        backgroundColor: '#301901',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 16.5
@@ -272,7 +271,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 16,
         lineHeight: 19,
-        color: '#fff',
+        color: '#f7d671',
     },
 
     btn: {
@@ -291,7 +290,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         fontSize: 17,
         lineHeight: 23,
-        color: '#000', 
+        color: '#f7d671', 
     },
 
     arrowIcon: {

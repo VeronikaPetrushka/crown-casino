@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView , Modal} from "react-native";
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView , ImageBackground } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Icons from './Icons';
@@ -55,58 +55,56 @@ const EventsDetails = ({ item }) => {
     };
 
     return (
-        <View style={styles.container}>
+        <ImageBackground source={require('../assets/back.png')} style={{flex: 1}}>
+            <View style={styles.container}>
 
-            <TouchableOpacity style={styles.back} onPress={() => navigation.goBack('')}>
-                    <Icons type={'back'} />
-            </TouchableOpacity>
-
-            <Image source={typeof item.image === 'string' ? { uri: item.image } : item.image} style={styles.image} />
-
-            <View style={styles.headingContainer}>
-                <Text style={styles.heading}>{item.name || item.heading}</Text>
-                <TouchableOpacity 
-                    style={styles.itemToolIcon} 
-                    onPress={() => isFavorite(item) ? removeFromFavorites(item) : addToFavorites(item)}
-                    >
-                    <Icons type={isFavorite(item) ? 'fav-black' : 'fav'} />
+                <TouchableOpacity style={styles.back} onPress={() => navigation.goBack('')}>
+                        <Icons type={'back'} />
                 </TouchableOpacity>
-            </View>
 
-            <View style={{width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', paddingHorizontal: 16, marginBottom: 24}}>
-                <Text style={styles.date}>{item.date}</Text>
-                <Text style={styles.date}>{item.time}</Text>
-            </View>
+                <Image source={typeof item.image === 'string' ? { uri: item.image } : item.image} style={styles.image} />
+
+                <View style={styles.headingContainer}>
+                    <Text style={styles.heading}>{item.name || item.heading}</Text>
+                    <TouchableOpacity 
+                        style={styles.itemToolIcon} 
+                        onPress={() => isFavorite(item) ? removeFromFavorites(item) : addToFavorites(item)}
+                        >
+                        <Icons type={isFavorite(item) ? 'fav-black' : 'fav'} active={isFavorite(item)} />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={{width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', paddingHorizontal: 16, marginBottom: 24}}>
+                    <Text style={styles.date}>{item.date}</Text>
+                    <Text style={styles.date}>{item.time}</Text>
+                </View>
 
 
-            <ScrollView style={{width: '100%', paddingHorizontal: 16}}>
-            {
-                item.description && (
-                    Array.isArray(item.description) ? (
-                        item.description.map((desc, i) => (
-                            <Text key={i} style={styles.description}>{desc}</Text>
-                        ))
-                    ) : (
-                        <Text style={styles.description}>{item.description}</Text>
+                <ScrollView style={{width: '100%', paddingHorizontal: 16}}>
+                {
+                    item.description && (
+                        Array.isArray(item.description) ? (
+                            item.description.map((desc, i) => (
+                                <Text key={i} style={styles.description}>{desc}</Text>
+                            ))
+                        ) : (
+                            <Text style={styles.description}>{item.description}</Text>
+                        )
                     )
-                )
-            }
+                }
 
-            <View style={{height: 85}} />
+                <View style={{height: 85}} />
 
-            </ScrollView>
+                </ScrollView>
 
-            {/* {
-                item.name && ( */}
-                    <View style={styles.signBtnContainer}>
-                        <TouchableOpacity style={styles.signBtn} onPress={() => navigation.navigate('SignupScreen', {item: item})}>
-                            <Text style={styles.signBtnText}>Sign up</Text>
-                        </TouchableOpacity>
-                    </View>
-                {/* )
-            } */}
-           
-        </View>
+                <View style={styles.signBtnContainer}>
+                    <TouchableOpacity style={styles.signBtn} onPress={() => navigation.navigate('SignupScreen', {item: item})}>
+                        <Text style={styles.signBtnText}>Sign up</Text>
+                    </TouchableOpacity>
+                </View>
+            
+            </View>
+        </ImageBackground>
     );
 };
 
@@ -114,7 +112,6 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'flex-start',
     },
@@ -122,7 +119,7 @@ const styles = StyleSheet.create({
     back: {
         width: 28,
         height: 24,
-        backgroundColor: '#fff',
+        backgroundColor: '#f7d671',
         position: 'absolute',
         top: height * 0.07,
         left: 16,
@@ -149,7 +146,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 34,
         lineHeight: 41,
-        color: '#000',
+        color: '#f7d671',
         width: '85%',
     },
 
@@ -162,7 +159,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         fontSize: 16,
         lineHeight: 19,
-        color: '#000',
+        color: '#f7d671',
         opacity: 0.5
     },
 
@@ -170,7 +167,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         fontSize: 16,
         lineHeight: 19,
-        color: '#000',
+        color: '#f7d671',
         marginBottom: 24
     },
 
@@ -179,7 +176,7 @@ const styles = StyleSheet.create({
         padding: 16, 
         alignItems: 'center', 
         justifyContent: 'center', 
-        backgroundColor: '#fff',
+        backgroundColor: '#120900',
         position: 'absolute',
         bottom: 0,
         alignSelf: 'center'
@@ -187,7 +184,7 @@ const styles = StyleSheet.create({
 
     signBtn: {
         width: '100%',
-        backgroundColor: '#000',
+        backgroundColor: '#301901',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 16.5
@@ -197,7 +194,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 16,
         lineHeight: 19,
-        color: '#fff',
+        color: '#f7d671',
     },
 
 });

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView, Modal } from "react-native";
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView, Modal, ImageBackground } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Icons from './Icons';
@@ -82,115 +82,119 @@ const Favs = () => {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.upperContainer}>
-                <TouchableOpacity style={styles.back} onPress={() => navigation.goBack('')}>
-                            <Icons type={'back'} />
-                </TouchableOpacity>
-                <Text style={styles.title}>Your Favorites</Text>
-            </View>
-
-            {favorites?.length > 0 ? (
-                <ScrollView style={{ width: '100%'}}>
-                    {favorites.map((crown, index) => (
-                        <TouchableOpacity key={index} style={styles.crownItem} onPress={() => navigation.navigate('DetailsScreen', {crown: crown})}>
-                            <View style={styles.crownTools}>
-                                <TouchableOpacity 
-                                    style={[styles.crownToolIcon, { width: 36 }]}
-                                    onPress={() => handleCrownSelection(crown)}
-                                    >
-                                    <Icons type={'dots'} />
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.crownToolIcon} onPress={() => removeFromFavorites(crown)}>
-                                    <Icons type={'fav-black'} />
-                                </TouchableOpacity>
-                            </View>
-                            {crown.image && <Image source={{ uri: crown.image }} style={styles.crownImage} />}
-                            <View style={{ width: '100%' }}>
-                                <View style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', marginBottom: 4 }}>
-                                    <Text style={[styles.crownHeading, { width: 200 }]} numberOfLines={1} ellipsizeMode='tail'>{crown.heading}</Text>
-                                    <Text style={styles.crownDescription}>{crown.filterChosen}</Text>
-                                </View>
-                                <View style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row' }}>
-                                    <Text style={[styles.crownDescription, { width: 200 }]} numberOfLines={1} ellipsizeMode='tail'>{crown.description}</Text>
-                                    <Text style={styles.crownDescription}>{crown.jewels?.length} items</Text>
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
-            ) : (
-                <View style={styles.noContainer}>
-                    <Image source={require('../assets/decor/crown.png')} style={styles.noImage} />
-                    <Text style={styles.noText}>You don't have any favorite crowns yet.</Text>
-                    <TouchableOpacity style={styles.noAddBtn} onPress={() => navigation.navigate('HomeScreen')}>
-                        <Text style={styles.noAddBtnText}>Go to Home</Text>
+        <ImageBackground source={require('../assets/back.png')} style={{flex: 1}}>
+            <View style={styles.container}>
+                <View style={styles.upperContainer}>
+                    <TouchableOpacity style={styles.back} onPress={() => navigation.goBack('')}>
+                        <Icons type={'back'} active />
                     </TouchableOpacity>
+                    <Text style={styles.title}>Your Favorites</Text>
                 </View>
-            )}
 
-            <Modal
-                transparent={true}
-                animationType="fade"
-                visible={dotsModalVisible}
-                onRequestClose={() => setDotsModalVisible(false)}
-            >
-                <View style={[styles.modalContainer, {justifyContent: 'flex-end'}]}>
-                    <View style={styles.modalContentDots}>
-                        <View style={styles.modalBtnsContainer}>
-                            <TouchableOpacity
-                                style={styles.modalButton}
-                                onPress={handleEdit}
-                            >
-                                <Text 
-                                    style={[styles.modalButtonText, {borderTopWidth: 0, fontWeight: '400', color: '#000'}]}>
-                                        Edit
-                                </Text>
+                {favorites?.length > 0 ? (
+                    <ScrollView style={{ width: '100%'}}>
+                        {favorites.map((crown, index) => (
+                            <TouchableOpacity key={index} style={styles.crownItem} onPress={() => navigation.navigate('DetailsScreen', {crown: crown})}>
+                                <View style={styles.crownTools}>
+                                    <TouchableOpacity 
+                                        style={[styles.crownToolIcon, { width: 36 }]}
+                                        onPress={() => handleCrownSelection(crown)}
+                                        >
+                                        <Icons type={'dots'} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.crownToolIcon} onPress={() => removeFromFavorites(crown)}>
+                                        <Icons type={'fav-black'} active />
+                                    </TouchableOpacity>
+                                </View>
+                                {crown.image && <Image source={{ uri: crown.image }} style={styles.crownImage} />}
+                                <View style={{ width: '100%' }}>
+                                    <View style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', marginBottom: 4 }}>
+                                        <Text style={[styles.crownHeading, { width: 200 }]} numberOfLines={1} ellipsizeMode='tail'>{crown.heading}</Text>
+                                        <Text style={styles.crownDescription}>{crown.filterChosen}</Text>
+                                    </View>
+                                    <View style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row' }}>
+                                        <Text style={[styles.crownDescription, { width: 200 }]} numberOfLines={1} ellipsizeMode='tail'>{crown.description}</Text>
+                                        <Text style={styles.crownDescription}>{crown.jewels?.length} items</Text>
+                                    </View>
+                                </View>
                             </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                ) : (
+                    <View style={styles.noContainer}>
+                        <View style={styles.noImage}>
+                            <Icons type={'1'} active />
+                        </View>
+                        <Text style={styles.noText}>You don't have any favorite crowns yet.</Text>
+                        <TouchableOpacity style={styles.noAddBtn} onPress={() => navigation.navigate('HomeScreen')}>
+                            <Text style={styles.noAddBtnText}>Go to Home</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
+
+                <Modal
+                    transparent={true}
+                    animationType="fade"
+                    visible={dotsModalVisible}
+                    onRequestClose={() => setDotsModalVisible(false)}
+                >
+                    <View style={[styles.modalContainer, {justifyContent: 'flex-end'}]}>
+                        <View style={styles.modalContentDots}>
+                            <View style={styles.modalBtnsContainer}>
+                                <TouchableOpacity
+                                    style={styles.modalButton}
+                                    onPress={handleEdit}
+                                >
+                                    <Text 
+                                        style={[styles.modalButtonText, {borderTopWidth: 0, fontWeight: '400', color: '#000'}]}>
+                                            Edit
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.modalButton}
+                                    onPress={handleDeleteDots}
+                                >
+                                    <Text style={[styles.modalButtonText, {fontWeight: '400'}]}>Delete</Text>
+                                </TouchableOpacity>
+                            </View>
                             <TouchableOpacity
-                                style={styles.modalButton}
-                                onPress={handleDeleteDots}
+                                style={styles.dotsCancelBtn}
+                                onPress={() => setDotsModalVisible(false)}
                             >
-                                <Text style={[styles.modalButtonText, {fontWeight: '400'}]}>Delete</Text>
+                                <Text style={styles.dotsCancelBtnText}>Cancel</Text>
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity
-                            style={styles.dotsCancelBtn}
-                            onPress={() => setDotsModalVisible(false)}
-                        >
-                            <Text style={styles.dotsCancelBtnText}>Cancel</Text>
-                        </TouchableOpacity>
                     </View>
-                </View>
-            </Modal>
+                </Modal>
 
-            <Modal
-                transparent={true}
-                animationType="fade"
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Delete the crown ?</Text>
-                        <Text style={styles.modalText}>{`Are you sure you want to delete ${selectedCrownToDelete?.heading}?`}</Text>
-                        <TouchableOpacity
-                            style={styles.modalButton}
-                            onPress={deleteCrown}
-                        >
-                            <Text style={styles.modalButtonText}>Delete</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={{width: '100%', paddingVertical: 11, alignItems: 'center', justifyContent: 'center'}}
-                            onPress={() => setModalVisible(false)}
-                        >
-                            <Text style={[styles.modalButtonText, {fontWeight: '400', color: '#000'}]}>Close</Text>
-                        </TouchableOpacity>
+                <Modal
+                    transparent={true}
+                    animationType="fade"
+                    visible={modalVisible}
+                    onRequestClose={() => setModalVisible(false)}
+                >
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalTitle}>Delete the crown ?</Text>
+                            <Text style={styles.modalText}>{`Are you sure you want to delete ${selectedCrownToDelete?.heading}?`}</Text>
+                            <TouchableOpacity
+                                style={styles.modalButton}
+                                onPress={deleteCrown}
+                            >
+                                <Text style={styles.modalButtonText}>Delete</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{width: '100%', paddingVertical: 11, alignItems: 'center', justifyContent: 'center'}}
+                                onPress={() => setModalVisible(false)}
+                            >
+                                <Text style={[styles.modalButtonText, {fontWeight: '400', color: '#000'}]}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-            </Modal>
+                </Modal>
 
-        </View>
+            </View>
+        </ImageBackground>
     );
 };
 
@@ -198,7 +202,6 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#fdf8ea',
         alignItems: 'center',
         justifyContent: 'flex-start',
         padding: 16,
@@ -223,7 +226,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 28,
         lineHeight: 33.41,
-        color: '#000'
+        color: '#f7d671'
     },
 
     crownItem: {
@@ -243,14 +246,14 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         fontSize: 18,
         lineHeight: 21.48,
-        color: '#000',
+        color: '#f7d671',
     },
 
     crownDescription: {
         fontWeight: '400',
         fontSize: 12,
         lineHeight: 14.32,
-        color: '#000',
+        color: '#f7d671',
         opacity: 0.4
     },
 
@@ -279,8 +282,8 @@ const styles = StyleSheet.create({
     },
 
     noImage: {
-        width: 130,
-        height: 130,
+        width: 80,
+        height: 80,
         marginBottom: 24,
     },
 
@@ -288,7 +291,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         fontSize: 13,
         lineHeight: 15,
-        color: '#000',
+        color: '#f7d671',
         textAlign: 'center',
         marginBottom: 24
     },
@@ -300,8 +303,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderWidth: 1,
         borderRadius: 20,
-        borderColor: '#000',
-        backgroundColor: '#fdf8ea'
+        borderColor: '#f7d671',
+        backgroundColor: '#f7d671'
     },
 
     noAddBtnText: {

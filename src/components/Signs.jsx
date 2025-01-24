@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView, Modal } from "react-native";
+import { View, Text, TouchableOpacity, Image, Dimensions, StyleSheet, ScrollView, Modal, ImageBackground } from "react-native";
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Calendar } from 'react-native-calendars';
@@ -142,181 +142,187 @@ const Signs = () => {
     console.log(signedEvents)
 
     return (
-        <View style={styles.container}>
+        <ImageBackground source={require('../assets/back.png')} style={{flex: 1}}>
+            <View style={styles.container}>
 
-            <View style={styles.upperContainer}>
-                <View style={{width: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexDirection: 'row',
-                    marginBottom: 16
-                }}
-                    >
-                    <TouchableOpacity style={{width: 44, height: 44}} onPress={() => navigation.goBack('')}>
-                        <Icons type={'back'} />
-                    </TouchableOpacity>
-                    <Text style={styles.title}>Reservations</Text>
-                    <View style={{alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
-                        <TouchableOpacity style={styles.calendarBtn} onPress={handleCalendar}>
-                            <Icons type={date != null ? 'calendar2' : 'calendar'} pressed={calendar} />
+                <View style={styles.upperContainer}>
+                    <View style={{width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexDirection: 'row',
+                        marginBottom: 16
+                    }}
+                        >
+                        <TouchableOpacity style={{width: 44, height: 44}} onPress={() => navigation.goBack('')}>
+                            <Icons type={'back'} active />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.favBtn} onPress={() => navigation.navigate('FavsSignsScreen')}>
-                            <Icons type={'fav'} />
-                        </TouchableOpacity>
+                        <Text style={styles.title}>Reservations</Text>
+                        <View style={{alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
+                            <TouchableOpacity style={styles.calendarBtn} onPress={handleCalendar}>
+                                <Icons type={date != null ? 'calendar2' : 'calendar'} pressed={calendar} active />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.favBtn} onPress={() => navigation.navigate('FavsSignsScreen')}>
+                                <Icons type={'fav'} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-            </View>
 
-            {
-                calendar ? (
-                    <View style={{width: '100%', alignItems: 'center'}}>
-                        <Calendar
-                            style={{ width: width * 0.88, borderWidth: 1, overflow: 'hidden', padding: 5}}
-                                            onDayPress={handleDayPress}
-                                            markedDates={
-                                                date
-                                                    ? { [date.toISOString().split('T')[0]]: { selected: true, selectedColor: '#ff3b30' } }
-                                                    : {}
-                                            }
-                            theme={{
-                                selectedDayBackgroundColor: '#ff3b30',
-                                todayTextColor: '#ff3b30',
-                                arrowColor: '#ff3b30',
-                                textDayFontWeight: '500',
-                                textMonthFontWeight: 'bold',
-                                textDayHeaderFontWeight: '500',
-                            }}
-                        />
-                        {
-                            date && (
-                                <View style={{ padding: 16, alignItems: 'center', justifyContent: 'center' }}>
-                                    <TouchableOpacity onPress={cancelFilter} style={styles.noAddBtn}>
-                                        <Text style={styles.noAddBtnText}>Cancel Filter</Text>
+                {
+                    calendar ? (
+                        <View style={{width: '100%', alignItems: 'center'}}>
+                            <Calendar
+                                style={{ width: width * 0.88, borderWidth: 1, borderColor: '#f7d671', backgroundColor: '#f7d671', overflow: 'hidden', padding: 5}}
+                                                onDayPress={handleDayPress}
+                                                markedDates={
+                                                    date
+                                                        ? { [date.toISOString().split('T')[0]]: { selected: true, selectedColor: '#f7d671' } }
+                                                        : {}
+                                                }
+                                theme={{
+                                    selectedDayBackgroundColor: '#f7d671',
+                                    textSectionTitleColor: '#301901', 
+                                    todayTextColor: '#f7d671',
+                                    monthTextColor: '#000',
+                                    arrowColor: '#000',
+                                    textDayFontWeight: '500',
+                                    textMonthFontWeight: 'bold',
+                                    textDayHeaderFontWeight: '500',
+                                }}
+                            />
+                            {
+                                date && (
+                                    <View style={{ padding: 16, alignItems: 'center', justifyContent: 'center' }}>
+                                        <TouchableOpacity onPress={cancelFilter} style={styles.noAddBtn}>
+                                            <Text style={styles.noAddBtnText}>Cancel Filter</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                            }
+                        </View>
+                    ) : (
+                        <View style={{width: '100%'}}>
+                            <ScrollView style={{width: '100%', paddingHorizontal: 16}}>
+
+                            {
+                                filteredSignedEvents.length > 0 ? (
+                                    <View style={{width: '100%'}}>
+                                        {
+                                            filteredSignedEvents.map((item, index) => (
+                                                <TouchableOpacity key={index} style={{width: '100%', marginBottom: 24}} onPress={() => navigation.navigate('EventsDetailsScreen', {item: item.item})}>
+                                                    <Text style={styles.date}>{item.item.date}</Text>
+                                                    <Image source={typeof item.item.image === 'string' ? { uri: item.item.image } : item.item.image} style={styles.image} />
+                        
+                                                    <View style={{width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
+                                                        <Text style={{color: '#f7d671'}}>{item.item.heading || item.item.name}</Text>
+                                                        <Text style={styles.time}>{item.item.time}</Text>
+                                                    </View>
+                                                    <View style={styles.itemTools}>
+                                                        <TouchableOpacity 
+                                                            style={[styles.itemToolIcon, {width: 36}]}
+                                                            onPress={() => handleEventSelection(item)}
+                                                            >
+                                                            <Icons type={'dots'} />
+                                                        </TouchableOpacity>
+                                                        <TouchableOpacity 
+                                                            style={styles.itemToolIcon} 
+                                                            onPress={() => isFavorite(item) ? removeFromFavorites(item) : addToFavorites(item)}
+                                                            >
+                                                            <Icons type={isFavorite(item) ? 'fav-black' : 'fav'} active={isFavorite(item)} />
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                </TouchableOpacity>
+                                            ))
+                                        }
+                                    </View>
+                                ) : (
+                                    <View style={styles.noContainer}>
+                                        <View style={styles.noImage}>
+                                            <Icons type={'1'} active />
+                                        </View>
+                                        {
+                                            filteredSignedEvents.length === 0 ? (
+                                                    <Text style={styles.noText}>There aren’t any events on selected date</Text>
+                                            ) : (
+                                                <Text style={styles.noText}>There aren’t any events you add yet, you can register it now</Text>
+                                            )
+                                        }
+                                        <TouchableOpacity style={styles.noAddBtn} onPress={() => navigation.navigate('EventsScreen')}>
+                                            <Text style={styles.noAddBtnText}>Go to events</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                            }
+
+                        </ScrollView>
+
+                        </View>
+                    )
+                }
+
+                    <Modal
+                        transparent={true}
+                        animationType="fade"
+                        visible={dotsModalVisible}
+                        onRequestClose={() => setDotsModalVisible(false)}
+                    >
+                        <View style={[styles.modalContainer, {justifyContent: 'flex-end'}]}>
+                            <View style={styles.modalContentDots}>
+                                <View style={styles.modalBtnsContainer}>
+                                    <TouchableOpacity
+                                        style={styles.modalButton}
+                                        onPress={handleEdit}
+                                    >
+                                        <Text 
+                                            style={[styles.modalButtonText, {borderTopWidth: 0, fontWeight: '400', color: '#000'}]}>
+                                                Edit
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.modalButton}
+                                        onPress={handleDeleteDots}
+                                    >
+                                        <Text style={[styles.modalButtonText, {fontWeight: '400'}]}>Delete</Text>
                                     </TouchableOpacity>
                                 </View>
-                            )
-                        }
-                    </View>
-                ) : (
-                    <View style={{width: '100%'}}>
-                        <ScrollView style={{width: '100%', paddingHorizontal: 16}}>
-
-                        {
-                            filteredSignedEvents.length > 0 ? (
-                                <View style={{width: '100%'}}>
-                                    {
-                                        filteredSignedEvents.map((item, index) => (
-                                            <TouchableOpacity key={index} style={{width: '100%', marginBottom: 24}} onPress={() => navigation.navigate('EventsDetailsScreen', {item: item.item})}>
-                                                <Text style={styles.date}>{item.item.date}</Text>
-                                                <Image source={typeof item.item.image === 'string' ? { uri: item.item.image } : item.item.image} style={styles.image} />
-                    
-                                                <View style={{width: '100%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
-                                                    <Text style={styles.name}>{item.item.heading || item.item.name}</Text>
-                                                    <Text style={styles.time}>{item.item.time}</Text>
-                                                </View>
-                                                <View style={styles.itemTools}>
-                                                    <TouchableOpacity 
-                                                        style={[styles.itemToolIcon, {width: 36}]}
-                                                        onPress={() => handleEventSelection(item)}
-                                                        >
-                                                        <Icons type={'dots'} />
-                                                    </TouchableOpacity>
-                                                    <TouchableOpacity 
-                                                        style={styles.itemToolIcon} 
-                                                        onPress={() => isFavorite(item) ? removeFromFavorites(item) : addToFavorites(item)}
-                                                        >
-                                                        <Icons type={isFavorite(item) ? 'fav-black' : 'fav'} />
-                                                    </TouchableOpacity>
-                                                </View>
-                                            </TouchableOpacity>
-                                        ))
-                                    }
-                                </View>
-                            ) : (
-                                <View style={styles.noContainer}>
-                                    <Image source={require('../assets/decor/crown.png')} style={styles.noImage} />
-                                    {
-                                        filteredSignedEvents.length === 0 ? (
-                                                <Text style={styles.noText}>There aren’t any events on selected date</Text>
-                                        ) : (
-                                            <Text style={styles.noText}>There aren’t any events you add yet, you can register it now</Text>
-                                        )
-                                    }
-                                    <TouchableOpacity style={styles.noAddBtn} onPress={() => navigation.navigate('EventsScreen')}>
-                                        <Text style={styles.noAddBtnText}>Go to events</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )
-                        }
-
-                    </ScrollView>
-
-                    </View>
-                )
-            }
-
-                <Modal
-                    transparent={true}
-                    animationType="fade"
-                    visible={dotsModalVisible}
-                    onRequestClose={() => setDotsModalVisible(false)}
-                >
-                    <View style={[styles.modalContainer, {justifyContent: 'flex-end'}]}>
-                        <View style={styles.modalContentDots}>
-                            <View style={styles.modalBtnsContainer}>
                                 <TouchableOpacity
-                                    style={styles.modalButton}
-                                    onPress={handleEdit}
+                                    style={styles.dotsCancelBtn}
+                                    onPress={() => setDotsModalVisible(false)}
                                 >
-                                    <Text 
-                                        style={[styles.modalButtonText, {borderTopWidth: 0, fontWeight: '400', color: '#000'}]}>
-                                            Edit
-                                    </Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={styles.modalButton}
-                                    onPress={handleDeleteDots}
-                                >
-                                    <Text style={[styles.modalButtonText, {fontWeight: '400'}]}>Delete</Text>
+                                    <Text style={styles.dotsCancelBtnText}>Cancel</Text>
                                 </TouchableOpacity>
                             </View>
-                            <TouchableOpacity
-                                style={styles.dotsCancelBtn}
-                                onPress={() => setDotsModalVisible(false)}
-                            >
-                                <Text style={styles.dotsCancelBtnText}>Cancel</Text>
-                            </TouchableOpacity>
                         </View>
-                    </View>
-                </Modal>
+                    </Modal>
 
-                <Modal
-                    transparent={true}
-                    animationType="fade"
-                    visible={modalVisible}
-                    onRequestClose={() => setModalVisible(false)}
-                >
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalContent}>
-                            <Text style={styles.modalTitle}>Delete the event ?</Text>
-                            <Text style={styles.modalText}>{`Are you sure you want to delete ${selectedEventToDelete?.heading}?`}</Text>
-                            <TouchableOpacity
-                                style={styles.modalButton}
-                                onPress={deleteEvent}
-                            >
-                                <Text style={styles.modalButtonText}>Delete</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={{width: '100%', paddingVertical: 11, alignItems: 'center', justifyContent: 'center'}}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={[styles.modalButtonText, {fontWeight: '400', color: '#000'}]}>Close</Text>
-                            </TouchableOpacity>
+                    <Modal
+                        transparent={true}
+                        animationType="fade"
+                        visible={modalVisible}
+                        onRequestClose={() => setModalVisible(false)}
+                    >
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                                <Text style={styles.modalTitle}>Delete the event ?</Text>
+                                <Text style={styles.modalText}>{`Are you sure you want to delete ${selectedEventToDelete?.heading}?`}</Text>
+                                <TouchableOpacity
+                                    style={styles.modalButton}
+                                    onPress={deleteEvent}
+                                >
+                                    <Text style={styles.modalButtonText}>Delete</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{width: '100%', paddingVertical: 11, alignItems: 'center', justifyContent: 'center'}}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <Text style={[styles.modalButtonText, {fontWeight: '400', color: '#000'}]}>Close</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                    </View>
-                </Modal>
+                    </Modal>
 
-        </View>
+            </View>
+        </ImageBackground>
     );
 };
 
@@ -324,7 +330,6 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'flex-start',
         paddingBottom: 85
@@ -336,7 +341,6 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         paddingTop: height * 0.07,
         padding: 16,
-        backgroundColor: '#f6f6f6',
     },
 
     back: {
@@ -366,7 +370,7 @@ const styles = StyleSheet.create({
         fontWeight: '900',
         fontSize: 24,
         lineHeight: 33.41,
-        color: '#000',
+        color: '#f7d671',
     },
 
     favIcon: {
@@ -386,7 +390,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 17,
         lineHeight: 20.29,
-        color: '#000',
+        color: '#f7d671',
         marginBottom: 12
     },
 
@@ -394,7 +398,7 @@ const styles = StyleSheet.create({
         fontWeight: '300',
         fontSize: 12,
         lineHeight: 14.32,
-        color: '#000',
+        color: '#f7d671',
         opacity: 0.5
     },
 
@@ -412,14 +416,13 @@ const styles = StyleSheet.create({
         borderRightWidth: 1,
         borderRightColor: '#999',
         paddingVertical: 9,
-        backgroundColor: '#ececec'
     },
 
     panelBtnText: {
         fontWeight: '400',
         fontSize: 13,
         lineHeight: 18,
-        color: '#000'
+        color: '#f7d671'
     },
 
     noContainer: {
@@ -431,8 +434,8 @@ const styles = StyleSheet.create({
     },
 
     noImage: {
-        width: 130,
-        height: 130,
+        width: 80,
+        height: 80,
         marginBottom: 24,
     },
 
@@ -440,7 +443,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         fontSize: 13,
         lineHeight: 15,
-        color: '#000',
+        color: '#f7d671',
         textAlign: 'center',
         marginBottom: 24
     },
@@ -452,8 +455,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderWidth: 1,
         borderRadius: 20,
-        borderColor: '#000',
-        backgroundColor: '#fdf8ea'
+        borderColor: '#f7d671',
+        backgroundColor: '#f7d671'
     },
 
     noAddBtnText: {
@@ -471,7 +474,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#fdf8ea',
         borderRadius: 100,
-        borderColor: '#000',
+        borderColor: '#f7d671',
         borderWidth: 1,
         position: 'absolute',
         right: 16,
